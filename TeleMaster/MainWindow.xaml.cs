@@ -46,24 +46,11 @@ namespace TeleMaster
             w.ShowDialog();
             RefreshDevices();
         }
-        void EditDevice()
-        {
-            if (lbDevices.SelectedItem != null)
-            {
-                Device d = Monitor.Instance.Devices.FirstOrDefault(dev => dev.Name == lbDevices.SelectedValue);
-                DeviceEdit w = new DeviceEdit(d);
-                w.ShowDialog();
-                RefreshDevices();
-            }
-        }
+        
         void RefreshDevices()
-        {
-            lbDevices.Items.Clear();
+        {        
             Monitor.Instance.LoadDevices();
-            foreach(Device d in Monitor.Instance.Devices)
-            {
-                lbDevices.Items.Add(d.Name);
-            }
+            lsDisplay.DataContext = null;
             lsDisplay.DataContext = Monitor.Instance.Devices;            
         }
         List<Event> events = new List<Event>();
@@ -73,15 +60,7 @@ namespace TeleMaster
             
             lvDeviceLog.DataContext = events;
             bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
             bw.RunWorkerAsync();
-        }
-
-        void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            
-            lvDeviceLog.DataContext = null;
-            lvDeviceLog.DataContext = events;
         }
 
         void bw_DoWork(object sender, DoWorkEventArgs e)
@@ -126,22 +105,25 @@ namespace TeleMaster
             }
         }
         BackgroundWorker bw = new BackgroundWorker();
-      
 
+        void DeleteDevice(Device toDelete)
+        {
+            Monitor.Instance.Devices.Remove(toDelete);
+            Monitor.Instance.SaveDevices();
+            RefreshDevices();
+        }
         private void cmDevices_Delete_Click(object sender, RoutedEventArgs e)
         {            
-            if(lbDevices.SelectedItem != null)
-            {
-                Device d = Monitor.Instance.Devices.FirstOrDefault(dev => dev.Name == lbDevices.SelectedValue);
-                Monitor.Instance.Devices.Remove(d);
-                Monitor.Instance.SaveDevices();
-                RefreshDevices();
-            }
+            if (lsDisplay.SelectedItem == null)
+                return;
+            DeleteDevice(lsDisplay.SelectedItem as Device);                
         }
 
         private void lbDevices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            EditDevice();
+            if (lsDisplay.SelectedItem == null)
+                return;
+            EditDevice(lsDisplay.SelectedItem as Device);
         }
 
         private void lsDisplay_MouseDoubleClick(object sender, MouseButtonEventArgs e)

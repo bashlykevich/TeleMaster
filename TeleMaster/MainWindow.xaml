@@ -12,25 +12,19 @@
     </Window.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>        
         <Grid Grid.Column="0">
-            <ListBox Name="lbDevices"
-                     MouseDoubleClick="lbDevices_MouseDoubleClick">
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Name="cmDevices_Create" Header="Добавить" Click="cmDevices_Create_Click" />
-                        <MenuItem Name="cmDevices_Delete" Header="Удалить" Click="cmDevices_Delete_Click" />
-                    </ContextMenu>
-                </ListBox.ContextMenu>
-            </ListBox>
-        </Grid>
-        <Grid Grid.Column="1">
             <StackPanel Orientation="Vertical">
                 <ListBox x:Name="lsDisplay"                     
                      MouseDoubleClick="lsDisplay_MouseDoubleClick"
                      ItemsSource="{Binding}">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Name="cmDevices_Create" Header="Добавить" Click="cmDevices_Create_Click" />
+                            <MenuItem Name="cmDevices_Delete" Header="Удалить" Click="cmDevices_Delete_Click" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="1"                              
