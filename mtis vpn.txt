@@ -1,0 +1,8 @@
+[21.10.2013 15:24:09] Андрей Кузмич МТИС: PSec gateway 93.125.87.2
+IPSec ID zachet
+IPSec secret neep8Roc
+Xauth username zachet
+Xauth password ietu0OKi
+и еще
+они должны на свиче и компе прописать дефолт гейт
+10.90.1.250
