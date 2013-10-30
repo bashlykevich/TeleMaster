@@ -25,6 +25,12 @@ namespace TeleMaster.DAO
         {
             get { return deviceName; }
             set { deviceName = value; }
-        }        
+        }
+        DateTime createdOn = DateTime.Now;
+
+        public DateTime CreatedOn
+        {
+            get { return createdOn; }            
+        }
     }
 }

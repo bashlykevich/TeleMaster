@@ -51,14 +51,12 @@ namespace TeleMaster
         {        
             Monitor.Instance.LoadDevices();
             lsDisplay.DataContext = null;
-            lsDisplay.DataContext = Monitor.Instance.Devices;            
+            lsDisplay.DataContext = Monitor.Instance.Devices;              
         }
         List<Event> events = new List<Event>();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            RefreshDevices();
-            
-            lvDeviceLog.DataContext = events;
+            RefreshDevices();                                    
             bw.DoWork += new DoWorkEventHandler(bw_DoWork);
             bw.RunWorkerAsync();
         }
@@ -68,7 +66,7 @@ namespace TeleMaster
             Action upd = new Action(() =>
                         {
                             lvDeviceLog.DataContext = null;
-                            lvDeviceLog.DataContext = events;
+                            lvDeviceLog.DataContext = events;                            
                         });
             int updateInterval = Monitor.Instance.UpdateInterval*1000;
             while(true)

@@ -14,8 +14,7 @@ namespace TeleMaster.Management
         private static Monitor instance = new Monitor();
         protected Monitor()
         {
-            devices = new List<Device>();
-            updateInterval = 3;
+            devices = new List<Device>();            
         }
         public static Monitor Instance
         {
@@ -29,7 +28,7 @@ namespace TeleMaster.Management
         {
             get { return devices; }            
         }
-        int updateInterval = 2; // seconds
+        int updateInterval = 1; // seconds
 
         public int UpdateInterval
         {
