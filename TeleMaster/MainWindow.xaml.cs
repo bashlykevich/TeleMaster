@@ -69,8 +69,9 @@ namespace TeleMaster
                             lvDeviceLog.DataContext = events;                            
                         });
             int updateInterval = Monitor.Instance.UpdateInterval*1000;
-            while(true)
-            {                                
+            bool blinker = false;
+            while (true)
+            {                
                 foreach (Device device in Monitor.Instance.Devices)
                 {
                     // read file
@@ -83,23 +84,34 @@ namespace TeleMaster
                     {
                         events.Add(new Event(DateTime.Now.ToShortTimeString() + ". " + fileFullName + " не найден", device.Name));
                         lvDeviceLog.Dispatcher.Invoke(upd);
-                        break;
-                    }                    
-                    StreamReader sr = new StreamReader(fileFullName);
-                    int newIndex =device.LastReadRowIndex;
-                    for (int i = 0; i < device.LastReadRowIndex; i++)
+                    }
+                    else
                     {
-                        sr.ReadLine();                        
+                        StreamReader sr = new StreamReader(fileFullName);
+                        int newIndex = device.LastReadRowIndex;
+                        for (int i = 0; i < device.LastReadRowIndex; i++)
+                        {
+                            sr.ReadLine();
+                        }
+                        while (!sr.EndOfStream)
+                        {
+                            events.Add(new Event(sr.ReadLine(), device.Name));
+                            newIndex++;
+                        }
+                        lvDeviceLog.Dispatcher.Invoke(upd);
+                        device.LastReadRowIndex = newIndex;
                     }
-                    while(!sr.EndOfStream)
-                    {                        
-                        events.Add(new Event(sr.ReadLine(), device.Name));
-                        newIndex++;                        
-                    }
-                    lvDeviceLog.Dispatcher.Invoke(upd);
-                    device.LastReadRowIndex = newIndex;                    
                 }
                 System.Threading.Thread.Sleep(updateInterval);
+                if (blinker)
+                {
+                    stTime.Dispatcher.Invoke(new Action(() => { stTime.Text = "Мониторинг"; }));
+                }
+                else
+                {
+                    stTime.Dispatcher.Invoke(new Action(() => { stTime.Text = ""; }));
+                }
+                blinker = !blinker;
             }
         }
         BackgroundWorker bw = new BackgroundWorker();
