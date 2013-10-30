@@ -41,8 +41,8 @@ namespace TeleMaster.View
             else
             { // edit                
                 int ind = Monitor.Instance.Devices.IndexOf(this.item);
-                Monitor.Instance.Devices[ind].Name = edtName.Text;
-                Monitor.Instance.Devices[ind].EventSource = edtSource.Text;                
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Name = edtName.Text;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).EventSource = edtSource.Text;                
             }
             Monitor.Instance.SaveDevices();
             this.Close();

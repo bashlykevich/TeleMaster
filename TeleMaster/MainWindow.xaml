@@ -40,12 +40,14 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Rectangle Grid.Row="0"                                            
-                                           Opacity="0.5"       
-                                           Visibility="{Binding Blink, Converter={StaticResource VisibilityConverter}}"
-                                           Canvas.ZIndex="2"
-                                           VerticalAlignment="Stretch"
-                                           HorizontalAlignment="Stretch"/>
+                                <Image 
+                                    Grid.Row="0" 
+                                    Canvas.ZIndex="2"
+                                    Width="30"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Visibility="{Binding HasAlerts, Converter={StaticResource VisibilityConverter}}"
+                                    Source="Img\alert.png" />                                                                                      
                                 <Image Grid.Row="0" 
                                        Source="Img\client.png" />
                                 <TextBlock Grid.Row="1"

@@ -28,7 +28,7 @@ namespace TeleMaster.Management
         {
             get { return devices; }            
         }
-        int updateInterval = 1; // seconds
+        int updateInterval = 2; // seconds
 
         public int UpdateInterval
         {
@@ -43,7 +43,7 @@ namespace TeleMaster.Management
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Device>));
                 TextReader stream = new StreamReader(filename);
                 devices = (List<Device>)serializer.Deserialize(stream);
-                stream.Close();            
+                stream.Close();                
             }
         }
         string filename = "devices2.xml";

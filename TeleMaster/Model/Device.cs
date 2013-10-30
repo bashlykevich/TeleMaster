@@ -7,6 +7,13 @@ namespace TeleMaster.DAO
 {
     public class Device
     {
+        Guid id = Guid.NewGuid();
+
+        public Guid ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
         public Device()
         {
             
