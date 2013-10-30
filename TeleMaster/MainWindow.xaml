@@ -86,6 +86,11 @@
                         <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />                        
                     </GridView>
                 </ListView.View>                   
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Name="miVerifyAllEvents" Header="Убрать все события" Click="miVerifyAllEvents_Click"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
         </Grid>
         <StatusBar Grid.Row="2" HorizontalAlignment="Right">

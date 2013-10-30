@@ -96,9 +96,9 @@ namespace TeleMaster
                     {
                         // read in ANSI encoding
                         // для тестовой версии - DEFAULT
-                        StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
+                        //StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
                         // для работей версии ANSI
-                        // StreamReader sr = new StreamReader(fileFullName, Encoding.GetEncoding(1252));
+                         StreamReader sr = new StreamReader(fileFullName, Encoding.GetEncoding(1252));
                         int newIndex = device.LastReadRowIndex;
                         
                         for (int i = 0; i < device.LastReadRowIndex; i++)
@@ -191,6 +191,24 @@ namespace TeleMaster
             }
             Event ev = lvDeviceLog.SelectedItem as Event;
             VerifyEvent(ev);            
+        }
+        void VerifyAllEvents()
+        {
+            events.Clear();
+            RefreshEvents();
+            foreach (Device device in Monitor.Instance.Devices)
+            {
+                if (!events.Exists(e => e.DeviceID == device.ID))
+                {
+                    Monitor.Instance.Devices.FirstOrDefault(d => d.ID == device.ID).HasAlerts = false;                    
+                }
+            }
+            Monitor.Instance.SaveDevices();
+            RefreshDevices();
+        }
+        private void miVerifyAllEvents_Click(object sender, RoutedEventArgs e)
+        {
+            VerifyAllEvents();
         }
     }
 }
