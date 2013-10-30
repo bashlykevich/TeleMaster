@@ -75,7 +75,7 @@ namespace TeleMaster
             while (true)
             {                
                 foreach (Device device in Monitor.Instance.Devices)
-                {
+                {                    
                     // read file
                     string filePath = device.EventSource;
                     string fileName = "history_" + DateTime.Now.Year + "_"
@@ -88,13 +88,14 @@ namespace TeleMaster
                         lvDeviceLog.Dispatcher.Invoke(upd);
                     }
                     else
-                    {                        
+                    {
                         // read in ANSI encoding
                         // для тестовой версии - DEFAULT
-                        StreamReader sr = new StreamReader(fileFullName, Encoding.Default);
+                        StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
                         // для работей версии ANSI
                         // StreamReader sr = new StreamReader(fileFullName, Encoding.GetEncoding(1252));
                         int newIndex = device.LastReadRowIndex;
+                        
                         for (int i = 0; i < device.LastReadRowIndex; i++)
                         {
                             sr.ReadLine();
@@ -106,6 +107,8 @@ namespace TeleMaster
                         }
                         lvDeviceLog.Dispatcher.Invoke(upd);
                         device.LastReadRowIndex = newIndex;
+                        Monitor.Instance.SaveDevices();
+
                     }
                 }
                 System.Threading.Thread.Sleep(updateInterval);
