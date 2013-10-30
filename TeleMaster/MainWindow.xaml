@@ -64,8 +64,16 @@
         </Grid>
         <Grid Grid.Column="0"
               Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock 
+                Grid.Row="0"
+                Text="Актуальные события" />
             <ListView 
                 Name="lvDeviceLog"
+                Grid.Row="1"
                 VerticalAlignment="Stretch"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                 ItemsSource="{Binding}">
