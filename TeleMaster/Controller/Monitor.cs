@@ -13,8 +13,9 @@ namespace TeleMaster.Management
     {
         private static Monitor instance = new Monitor();
         protected Monitor()
-        {
-            devices = new List<Device>();            
+        {            
+            this.LoadDevices();
+            events = new List<Event>();
         }
         public static Monitor Instance
         {
@@ -23,6 +24,13 @@ namespace TeleMaster.Management
                 return instance;
             }
         }
+        List<Event> events;
+
+        public List<Event> Events
+        {
+            get { return events; }            
+        }
+
         List<Device> devices;
         internal List<Device> Devices
         {
@@ -36,7 +44,7 @@ namespace TeleMaster.Management
             set { updateInterval = value; }
         }
 
-        public void LoadDevices()
+        private void LoadDevices()
         {
             if(File.Exists(filename))
             {

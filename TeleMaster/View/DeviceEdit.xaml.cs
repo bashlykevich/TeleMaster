@@ -35,14 +35,15 @@ namespace TeleMaster.View
         {
             if (this.item == null)
             { //create
-                Device d = new Device(edtName.Text, edtSource.Text);
+                Device d = new Device(edtName.Text, edtSource.Text, edtType.SelectedIndex);
                 Monitor.Instance.Devices.Add(d);                
             }
             else
             { // edit                
                 int ind = Monitor.Instance.Devices.IndexOf(this.item);
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Name = edtName.Text;
-                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).EventSource = edtSource.Text;                
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).EventSource = edtSource.Text;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Type = (DeviceType)edtType.SelectedIndex;                
             }
             Monitor.Instance.SaveDevices();
             this.Close();
@@ -54,6 +55,7 @@ namespace TeleMaster.View
             {
                 edtName.Text = item.Name;
                 edtSource.Text = item.EventSource;
+                edtType.SelectedIndex = (int)item.Type;
             }
         }
     }

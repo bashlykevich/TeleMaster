@@ -9,7 +9,7 @@
         Height="600"
         Title="Мониторинг телесканеров">
     <Window.Resources>
-        <helpers:VisibilityConverter x:Key="VisibilityConverter"></helpers:VisibilityConverter>
+        <helpers:VisibilityConverter x:Key="VisibilityConverter"></helpers:VisibilityConverter>        
     </Window.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
@@ -47,7 +47,23 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                     <RowDefinition />
-                                </Grid.RowDefinitions>
+                                </Grid.RowDefinitions>                                                               
+                                <Image Grid.Row="0" 
+                                       Canvas.ZIndex="1"
+                                       Visibility="{Binding TypeIsTelescanerA, 
+                                            Converter={StaticResource VisibilityConverter}}"
+                                       Source="Img\client.png" />
+                                <Image Grid.Row="0" 
+                                       Canvas.ZIndex="1"
+                                       Visibility="{Binding TypeIsTelescanerD, 
+                                            Converter={StaticResource VisibilityConverter}}"
+                                       Source="Img\client.png" />
+                                <Image Grid.Row="0"
+                                       Canvas.ZIndex="1"
+                                       Width="40"
+                                       Visibility="{Binding TypeIsUPS, 
+                                            Converter={StaticResource VisibilityConverter}}"
+                                       Source="Img\ups.png" />
                                 <Image 
                                     Grid.Row="0" 
                                     Canvas.ZIndex="2"
@@ -55,9 +71,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Visibility="{Binding HasAlerts, Converter={StaticResource VisibilityConverter}}"
-                                    Source="Img\alert.png" />                                                                                      
-                                <Image Grid.Row="0" 
-                                       Source="Img\client.png" />
+                                    Source="Img\alert.png" />
                                 <TextBlock Grid.Row="1"
                                     HorizontalAlignment="Center"
                                     Text="{Binding Name}" />

@@ -25,57 +25,74 @@ namespace TeleMaster
     /// </summary>
     public partial class MainWindow : Window
     {
+        BackgroundWorker bw = new BackgroundWorker();
+
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        private void cmDevices_Create_Click(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            CreateDevice();
+            RefreshDevices();
+            foreach (Device device in Monitor.Instance.Devices)
+                device.HasAlerts = false;
+            bw.DoWork += new DoWorkEventHandler(CheckDeviceEvents);
+            bw.RunWorkerAsync();
         }
+
         void CreateDevice()
         {
             DeviceEdit w = new DeviceEdit();
             w.ShowDialog();
-            RefreshDevices();
+            RefreshInfo();
         }
         void EditDevice(Device toEdit)
         {
             DeviceEdit w = new DeviceEdit(toEdit);
             w.ShowDialog();
+            RefreshInfo();
+        }
+        void DeleteDevice(Device toDelete)
+        {
+            Monitor.Instance.Devices.Remove(toDelete);
+            Monitor.Instance.SaveDevices();
+            RefreshInfo();
+        }      
+        
+        void RefreshInfo()
+        {
             RefreshDevices();
+            RefreshEvents();
+        }
+        void RefreshDevices()
+        {            
+            foreach (Device device in Monitor.Instance.Devices)
+            {
+                if (Monitor.Instance.Events.Exists(e => e.DeviceID == device.ID))
+                {
+                    device.HasAlerts = true;
+                }
+                else
+                {
+                    device.HasAlerts = false;
+                }
+            }
+            lsDisplay.DataContext = null;
+            lsDisplay.DataContext = Monitor.Instance.Devices;            
+        }
+        void RefreshEvents()
+        {
+            lvDeviceLog.DataContext = null;
+            lvDeviceLog.DataContext = Monitor.Instance.Events;
         }
         
-        void RefreshDevices()
-        {        
-            Monitor.Instance.LoadDevices();
-            lsDisplay.DataContext = null;
-            lsDisplay.DataContext = Monitor.Instance.Devices;
-            lvDeviceLog.DataContext = events;
-        }
-        List<Event> events = new List<Event>();
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        void CheckDeviceEvents(object sender, DoWorkEventArgs e)
         {
-            RefreshDevices();
-            foreach (Device device in Monitor.Instance.Devices)
-                device.HasAlerts = false;                  
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.RunWorkerAsync();
-        }
-
-        void bw_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Action upd = new Action(() =>
-                        {
-                            lvDeviceLog.DataContext = null;
-                            lvDeviceLog.DataContext = events;
-
-                        });
-            int updateInterval = Monitor.Instance.UpdateInterval*1000;
+            int updateInterval = Monitor.Instance.UpdateInterval*1000; // seconds to milliseconds
             bool blinker = false;
             while (true)
-            {                
+            {
+                bool needToUpdate = false;
                 foreach (Device device in Monitor.Instance.Devices)
                 {                    
                     // read file
@@ -86,11 +103,9 @@ namespace TeleMaster
                     string fileFullName = filePath + @"\" + fileName;
                     if (!File.Exists(fileFullName))
                     {
-                        events.Add(new Event(DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!", device.Name, device.ID));
-                        lvDeviceLog.Dispatcher.Invoke(upd);
-                        device.HasAlerts = true;
-                        Monitor.Instance.SaveDevices();
-                        lsDisplay.Dispatcher.Invoke(new Action(() => { RefreshDevices(); }));
+                        string message  = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
+                        Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID));
+                        needToUpdate = true;                       
                     }
                     else
                     {
@@ -102,24 +117,25 @@ namespace TeleMaster
                         {
                             sr.ReadLine();
                         }
-                        bool hasNewEvents = false;
+                        bool indexChanged = false;
                         while (!sr.EndOfStream)
                         {
-                            hasNewEvents = true;
-                            events.Add(new Event(sr.ReadLine(), device.Name, device.ID));
+                            indexChanged = true;
+                            Monitor.Instance.Events.Add(new Event(sr.ReadLine(), device.Name, device.ID));
                             newIndex++;
                         }
                         sr.Close();
-                        if (hasNewEvents)
-                        {
-                            lvDeviceLog.Dispatcher.Invoke(upd);
+                        if (indexChanged)
+                        {                            
                             device.LastReadRowIndex = newIndex;
-                            device.HasAlerts = true;
-                            Monitor.Instance.SaveDevices();
-                            lsDisplay.Dispatcher.Invoke(new Action(() => { RefreshDevices(); }));
+                            needToUpdate = true;
                         }
-                        
                     }
+                }
+                if (needToUpdate)
+                {
+                    Monitor.Instance.SaveDevices();
+                    lsDisplay.Dispatcher.Invoke(new Action(() => { RefreshInfo(); }));
                 }
                 System.Threading.Thread.Sleep(updateInterval);
                 if (blinker)
@@ -133,19 +149,32 @@ namespace TeleMaster
                 blinker = !blinker;
             }
         }
-        BackgroundWorker bw = new BackgroundWorker();
-
-        void DeleteDevice(Device toDelete)
+   
+        void VerifyEvent(Event ev)
         {
-            Monitor.Instance.Devices.Remove(toDelete);
-            Monitor.Instance.SaveDevices();
+            Guid deviceID = ev.DeviceID;
+            Monitor.Instance.Events.Remove(ev);
+            if (!Monitor.Instance.Events.Exists(e => e.DeviceID == deviceID))
+            {
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).HasAlerts = false;
+                Monitor.Instance.SaveDevices();
+                RefreshDevices();
+            }
+            RefreshEvents();
+        }                
+        void VerifyAllEvents()
+        {
+            Monitor.Instance.Events.Clear();
+            RefreshEvents();            
             RefreshDevices();
         }
+
+        #region HANDLERS
         private void cmDevices_Delete_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             if (lsDisplay.SelectedItem == null)
                 return;
-            DeleteDevice(lsDisplay.SelectedItem as Device);                
+            DeleteDevice(lsDisplay.SelectedItem as Device);
         }
 
         private void lbDevices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -161,47 +190,9 @@ namespace TeleMaster
                 return;
             EditDevice(lsDisplay.SelectedItem as Device);
         }
-        
-        void VerifyEvent(Event ev)
+        private void cmDevices_Create_Click(object sender, RoutedEventArgs e)
         {
-            Guid deviceID = ev.DeviceID;
-            events.Remove(ev);
-            if (!events.Exists(e => e.DeviceID == deviceID))
-            {
-                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).HasAlerts = false;
-                Monitor.Instance.SaveDevices();
-                RefreshDevices();
-            }
-            RefreshEvents();
-        }
-        void RefreshEvents()
-        {
-            lvDeviceLog.DataContext = null;
-            lvDeviceLog.DataContext = events;            
-        }
-
-        private void lvDeviceLog_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (lvDeviceLog.SelectedItem == null)
-            {               
-                return;
-            }
-            Event ev = lvDeviceLog.SelectedItem as Event;
-            VerifyEvent(ev);            
-        }
-        void VerifyAllEvents()
-        {
-            events.Clear();
-            RefreshEvents();
-            foreach (Device device in Monitor.Instance.Devices)
-            {
-                if (!events.Exists(e => e.DeviceID == device.ID))
-                {
-                    Monitor.Instance.Devices.FirstOrDefault(d => d.ID == device.ID).HasAlerts = false;                    
-                }
-            }
-            Monitor.Instance.SaveDevices();
-            RefreshDevices();
+            CreateDevice();
         }
         private void miVerifyAllEvents_Click(object sender, RoutedEventArgs e)
         {
@@ -218,5 +209,15 @@ namespace TeleMaster
         {
             this.Close();
         }
+        private void lvDeviceLog_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lvDeviceLog.SelectedItem == null)
+            {
+                return;
+            }
+            Event ev = lvDeviceLog.SelectedItem as Event;
+            VerifyEvent(ev);
+        }
+        #endregion
     }
 }

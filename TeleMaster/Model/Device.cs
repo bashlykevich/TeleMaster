@@ -5,12 +5,33 @@ using System.Text;
 
 namespace TeleMaster.DAO
 {
-    public enum DeviceType {TelescanerA, TelescanerD, UPS};
+    public enum DeviceType {TelescanerA=0, TelescanerD=1, UPS=2};
 
     public class Device
     {
-        DeviceType type;
-
+        DeviceType type = DeviceType.TelescanerA;
+        
+        public bool TypeIsTelescanerA
+        {
+            get
+            {
+                return (type == DeviceType.TelescanerA);
+            }
+        }
+        public bool TypeIsTelescanerD
+        {
+            get
+            {
+                return (type == DeviceType.TelescanerD);
+            }
+        }
+        public bool TypeIsUPS
+        {
+            get
+            {
+                return (type == DeviceType.UPS);
+            }
+        }
         public DeviceType Type
         {
             get { return type; }
@@ -26,10 +47,11 @@ namespace TeleMaster.DAO
         {
             
         }
-        public Device(string name, string logSrc)
+        public Device(string name, string logSrc, int type)
         {
             this.name = name;
             this.eventSource = logSrc;
+            this.type = (DeviceType)type;
         }
         string name;
         string eventSource;

@@ -29,6 +29,5 @@ namespace TeleMaster.Helpers
             Visibility visibility = (Visibility)value;
             return (visibility == Visibility.Visible);
         }
-    }
-
+    }    
 }
