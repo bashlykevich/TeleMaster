@@ -95,10 +95,7 @@ namespace TeleMaster
                     else
                     {
                         // read in ANSI encoding
-                        // для тестовой версии - DEFAULT
-                        //StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
-                        // для работей версии ANSI
-                         StreamReader sr = new StreamReader(fileFullName, Encoding.GetEncoding(1252));
+                        StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
                         int newIndex = device.LastReadRowIndex;
                         
                         for (int i = 0; i < device.LastReadRowIndex; i++)
