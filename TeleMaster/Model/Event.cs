@@ -5,8 +5,20 @@ using System.Text;
 
 namespace TeleMaster.DAO
 {
+    public enum EventState { Новое, Просмотрено};
     public class Event
     {
+        EventState state = EventState.Новое;
+
+        public EventState State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+        public void Verify()
+        {
+            state = EventState.Просмотрено;
+        }
         public Event(string message, string device)
         {
             this.deviceName = device;

@@ -6,7 +6,7 @@
         Loaded="Window_Loaded"
         Width="800"
         Height="600"
-        Title="MainWindow">
+        Title="Мониторинг телесканеров">
     <Window.Resources>
         <helpers:VisibilityConverter x:Key="VisibilityConverter"></helpers:VisibilityConverter>
     </Window.Resources>
@@ -71,8 +71,9 @@
                 ItemsSource="{Binding}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="100" Header="DeviceName" DisplayMemberBinding="{Binding Path=DeviceName}" />
-                        <GridViewColumn Width="Auto" Header="Message" DisplayMemberBinding="{Binding Path=Message}" />
+                        <GridViewColumn Width="100" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />
+                        <GridViewColumn Width="Auto" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />
+                        <GridViewColumn Width="100" Header="Состояние" DisplayMemberBinding="{Binding Path=State}" />
                     </GridView>
                 </ListView.View>                
             </ListView>
