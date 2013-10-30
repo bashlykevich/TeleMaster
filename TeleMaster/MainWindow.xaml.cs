@@ -51,7 +51,8 @@ namespace TeleMaster
         {        
             Monitor.Instance.LoadDevices();
             lsDisplay.DataContext = null;
-            lsDisplay.DataContext = Monitor.Instance.Devices;              
+            lsDisplay.DataContext = Monitor.Instance.Devices;
+            lvDeviceLog.DataContext = events;
         }
         List<Event> events = new List<Event>();
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -66,7 +67,8 @@ namespace TeleMaster
             Action upd = new Action(() =>
                         {
                             lvDeviceLog.DataContext = null;
-                            lvDeviceLog.DataContext = events;                            
+                            lvDeviceLog.DataContext = events;
+
                         });
             int updateInterval = Monitor.Instance.UpdateInterval*1000;
             bool blinker = false;
@@ -145,6 +147,24 @@ namespace TeleMaster
             if (lsDisplay.SelectedItem == null)
                 return;
             EditDevice(lsDisplay.SelectedItem as Device);
+        }
+        
+        void VerifyEvent(Event ev)
+        {
+            events.Remove(ev);
+            RefreshEvents();
+        }
+        void RefreshEvents()
+        {
+            lvDeviceLog.DataContext = events;
+        }
+
+        private void lvDeviceLog_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lvDeviceLog.SelectedItem == null)
+                return;
+            Event ev = lvDeviceLog.SelectedItem as Event;
+            VerifyEvent(ev);            
         }
     }
 }

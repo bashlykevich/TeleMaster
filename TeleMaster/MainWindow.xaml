@@ -76,14 +76,14 @@
                 Grid.Row="1"
                 VerticalAlignment="Stretch"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                MouseDoubleClick="lvDeviceLog_MouseDoubleClick"
                 ItemsSource="{Binding}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="100" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />
-                        <GridViewColumn Width="Auto" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />
-                        <GridViewColumn Width="100" Header="Состояние" DisplayMemberBinding="{Binding Path=State}" />
+                        <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />                        
                     </GridView>
-                </ListView.View>                
+                </ListView.View>                   
             </ListView>
         </Grid>
         <StatusBar Grid.Row="2" HorizontalAlignment="Right">
