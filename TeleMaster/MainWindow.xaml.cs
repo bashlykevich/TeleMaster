@@ -206,6 +206,17 @@ namespace TeleMaster
         private void miVerifyAllEvents_Click(object sender, RoutedEventArgs e)
         {
             VerifyAllEvents();
+        }        
+
+        private void miMainAbout_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow wind = new AboutWindow();
+            wind.ShowDialog();
+        }
+
+        private void miMainExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
