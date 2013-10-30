@@ -86,8 +86,9 @@ namespace TeleMaster
                         lvDeviceLog.Dispatcher.Invoke(upd);
                     }
                     else
-                    {
-                        StreamReader sr = new StreamReader(fileFullName);
+                    {                        
+                        // read in ANSI encoding
+                        StreamReader sr = new StreamReader(fileFullName, Encoding.GetEncoding(1252));
                         int newIndex = device.LastReadRowIndex;
                         for (int i = 0; i < device.LastReadRowIndex; i++)
                         {
