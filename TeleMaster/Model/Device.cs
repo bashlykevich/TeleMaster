@@ -5,10 +5,18 @@ using System.Text;
 
 namespace TeleMaster.DAO
 {
+    public enum DeviceType {TelescanerA, TelescanerD, UPS};
+
     public class Device
     {
-        Guid id = Guid.NewGuid();
+        DeviceType type;
 
+        public DeviceType Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+        Guid id = Guid.NewGuid();
         public Guid ID
         {
             get { return id; }
