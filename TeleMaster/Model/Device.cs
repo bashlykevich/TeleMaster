@@ -88,9 +88,6 @@ namespace TeleMaster.DAO
         {
             get { return name; }
             set { name = value; }
-        }
-        //EventSource source;
-        List<Event> events;
-        DeviceIcon icon;
+        }        
     }
 }
