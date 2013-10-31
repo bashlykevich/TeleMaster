@@ -78,7 +78,7 @@ namespace TeleMaster
                 }
             }
             lsDisplay.DataContext = null;
-            lsDisplay.DataContext = Monitor.Instance.Devices;            
+            lsDisplay.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Name);            
         }
         void RefreshEvents()
         {
