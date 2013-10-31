@@ -68,7 +68,7 @@ namespace TeleMaster
         {            
             foreach (Device device in Monitor.Instance.Devices)
             {
-                if (Monitor.Instance.Events.Exists(e => e.DeviceID == device.ID))
+                if (Monitor.Instance.Events.Exists(e => e.DeviceID == device.ID && e.Type == EventType.Alert))
                 {
                     device.HasAlerts = true;
                 }
@@ -103,12 +103,16 @@ namespace TeleMaster
                     string fileFullName = filePath + @"\" + fileName;
                     if (!File.Exists(fileFullName))
                     {
-                        string message  = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
-                        Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID));
-                        needToUpdate = true;                       
+                        if(!device.IsDisconnected)
+                        {
+                            string message  = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
+                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));                        
+                            device.IsDisconnected = true;
+                            needToUpdate = true;
+                        }                                               
                     }
                     else
-                    {
+                    {                                                
                         // read in ANSI encoding
                         StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
                         int newIndex = device.LastReadRowIndex;
@@ -121,13 +125,20 @@ namespace TeleMaster
                         while (!sr.EndOfStream)
                         {
                             indexChanged = true;
-                            Monitor.Instance.Events.Add(new Event(sr.ReadLine(), device.Name, device.ID));
+                            Monitor.Instance.Events.Add(new Event(sr.ReadLine(), device.Name, device.ID, EventType.Alert));
                             newIndex++;
                         }
                         sr.Close();
                         if (indexChanged)
                         {                            
                             device.LastReadRowIndex = newIndex;
+                            needToUpdate = true;
+                        }
+                        if (device.IsDisconnected)
+                        {
+                            string message = DateTime.Now.ToShortTimeString() + ". Соединение восстановлено.";
+                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));                                                    
+                            device.IsDisconnected = false;
                             needToUpdate = true;
                         }
                     }

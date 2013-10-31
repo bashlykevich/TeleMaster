@@ -4,11 +4,19 @@ using System.Linq;
 using System.Text;
 
 namespace TeleMaster.DAO
-{    
+{
+    public enum EventType { Alert, Disconnect};
     public enum EventState { Новое, Просмотрено};
     public class Event
     {
         Guid deviceID = Guid.Empty;
+        EventType type = EventType.Alert;
+
+        public EventType Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
 
         public Guid DeviceID
         {
@@ -25,11 +33,12 @@ namespace TeleMaster.DAO
         {
             state = EventState.Просмотрено;
         }
-        public Event(string message, string device, Guid deviceID)
+        public Event(string message, string device, Guid deviceID, EventType type)
         {
             this.deviceName = device;
             this.message = message;
             this.deviceID = deviceID;
+            this.type = type;
         }
         string deviceName;
         string message;

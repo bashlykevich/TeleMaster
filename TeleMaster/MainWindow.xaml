@@ -52,12 +52,12 @@
                                        Canvas.ZIndex="1"
                                        Visibility="{Binding TypeIsTelescanerA, 
                                             Converter={StaticResource VisibilityConverter}}"
-                                       Source="Img\client.png" />
+                                       Source="Img\client_a.png" />
                                 <Image Grid.Row="0" 
                                        Canvas.ZIndex="1"
                                        Visibility="{Binding TypeIsTelescanerD, 
                                             Converter={StaticResource VisibilityConverter}}"
-                                       Source="Img\client.png" />
+                                       Source="Img\client_d.png" />
                                 <Image Grid.Row="0"
                                        Canvas.ZIndex="1"
                                        Width="40"
@@ -67,11 +67,19 @@
                                 <Image 
                                     Grid.Row="0" 
                                     Canvas.ZIndex="2"
-                                    Width="30"
+                                    Width="25"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
                                     Visibility="{Binding HasAlerts, Converter={StaticResource VisibilityConverter}}"
                                     Source="Img\alert.png" />
+                                <Image 
+                                    Grid.Row="0" 
+                                    Canvas.ZIndex="3"
+                                    Width="25"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                    Source="Img\disconnect.png" />
                                 <TextBlock Grid.Row="1"
                                     HorizontalAlignment="Center"
                                     Text="{Binding Name}" />

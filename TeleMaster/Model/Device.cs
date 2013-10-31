@@ -32,6 +32,14 @@ namespace TeleMaster.DAO
                 return (type == DeviceType.UPS);
             }
         }
+        bool isDisconnected = false;
+
+        public bool IsDisconnected
+        {
+            get { return isDisconnected; }
+            set { isDisconnected = value; }
+        }
+
         public DeviceType Type
         {
             get { return type; }
