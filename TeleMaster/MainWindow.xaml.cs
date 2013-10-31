@@ -101,57 +101,61 @@ namespace TeleMaster
                                                  + DateTime.Now.Month + "_"
                                                  + DateTime.Now.Day + ".log";
                     string fileFullName = filePath + @"\" + fileName;
-                    if (!File.Exists(fileFullName))
+                    // проверить, доступна ли указанная директория
+                    if (!Directory.Exists(filePath))
                     {
-                        if(!device.IsDisconnected)
+                        if (!device.IsDisconnected)
                         {
-                            string message  = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
+                            string message = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
                             Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
-                            
+
                             message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tНет доступа к устройству!";
                             device.LogEventToFile(message);
-                            
+
                             device.IsDisconnected = true;
                             needToUpdate = true;
-                        }                                               
+                        }
                     }
                     else
-                    {                                                
-                        // read in ANSI encoding
-                        StreamReader sr = new StreamReader(fileFullName, Encoding.Default);                        
-                        int newIndex = device.LastReadRowIndex;
-                        
-                        for (int i = 0; i < device.LastReadRowIndex; i++)
+                    {
+                        if (File.Exists(fileFullName))
                         {
-                            sr.ReadLine();
-                        }
-                        bool indexChanged = false;
-                        while (!sr.EndOfStream)
-                        {
-                            indexChanged = true;
-                            string message = sr.ReadLine();
-                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Alert));
-                                                        
-                            device.LogEventToFile(message);
-                            
-                            newIndex++;
-                        }
-                        sr.Close();
-                        if (indexChanged)
-                        {                            
-                            device.LastReadRowIndex = newIndex;
-                            needToUpdate = true;
-                        }
-                        if (device.IsDisconnected)
-                        {
-                            string message = DateTime.Now.ToShortTimeString() + ". Соединение восстановлено.";
-                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                            // read in ANSI encoding
+                            StreamReader sr = new StreamReader(fileFullName, Encoding.Default);
+                            int newIndex = device.LastReadRowIndex;
 
-                            message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tДоступ восстановлен.";
-                            device.LogEventToFile(message);
+                            for (int i = 0; i < device.LastReadRowIndex; i++)
+                            {
+                                sr.ReadLine();
+                            }
+                            bool indexChanged = false;
+                            while (!sr.EndOfStream)
+                            {
+                                indexChanged = true;
+                                string message = sr.ReadLine();
+                                Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Alert));
 
-                            device.IsDisconnected = false;
-                            needToUpdate = true;
+                                device.LogEventToFile(message);
+
+                                newIndex++;
+                            }
+                            sr.Close();
+                            if (indexChanged)
+                            {
+                                device.LastReadRowIndex = newIndex;
+                                needToUpdate = true;
+                            }
+                            if (device.IsDisconnected)
+                            {
+                                string message = DateTime.Now.ToShortTimeString() + ". Соединение восстановлено.";
+                                Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+
+                                message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tДоступ восстановлен.";
+                                device.LogEventToFile(message);
+
+                                device.IsDisconnected = false;
+                                needToUpdate = true;
+                            }
                         }
                     }
                 }
@@ -223,19 +227,13 @@ namespace TeleMaster
             if (lsDisplay.SelectedItem == null)
                 return;
             VerifyAllEvents(lsDisplay.SelectedItem as Device);
-        }
-        private void lbDevices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (lsDisplay.SelectedItem == null)
-                return;
-            EditDevice(lsDisplay.SelectedItem as Device);
-        }
+        }     
 
         private void lsDisplay_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (lsDisplay.SelectedItem == null)
                 return;
-            EditDevice(lsDisplay.SelectedItem as Device);
+            ShowDeviceEventsHistory(lsDisplay.SelectedItem as Device);
         }
         private void cmDevices_Create_Click(object sender, RoutedEventArgs e)
         {
