@@ -106,7 +106,11 @@ namespace TeleMaster
                         if(!device.IsDisconnected)
                         {
                             string message  = DateTime.Now.ToShortTimeString() + ". " + fileFullName + " - нет доступа!";
-                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));                        
+                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                            
+                            message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tНет доступа к устройству!";
+                            device.LogEventToFile(message);
+                            
                             device.IsDisconnected = true;
                             needToUpdate = true;
                         }                                               
@@ -125,7 +129,11 @@ namespace TeleMaster
                         while (!sr.EndOfStream)
                         {
                             indexChanged = true;
-                            Monitor.Instance.Events.Add(new Event(sr.ReadLine(), device.Name, device.ID, EventType.Alert));
+                            string message = sr.ReadLine();
+                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Alert));
+                                                        
+                            device.LogEventToFile(message);
+                            
                             newIndex++;
                         }
                         sr.Close();
@@ -137,7 +145,11 @@ namespace TeleMaster
                         if (device.IsDisconnected)
                         {
                             string message = DateTime.Now.ToShortTimeString() + ". Соединение восстановлено.";
-                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));                                                    
+                            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+
+                            message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tДоступ восстановлен.";
+                            device.LogEventToFile(message);
+
                             device.IsDisconnected = false;
                             needToUpdate = true;
                         }
@@ -167,9 +179,12 @@ namespace TeleMaster
             Monitor.Instance.Events.Remove(ev);
             if (!Monitor.Instance.Events.Exists(e => e.DeviceID == deviceID))
             {
-                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).HasAlerts = false;
-                Monitor.Instance.SaveDevices();
-                RefreshDevices();
+                if (Monitor.Instance.Devices.Exists(d => d.ID == deviceID))
+                {
+                    Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).HasAlerts = false;
+                    Monitor.Instance.SaveDevices();
+                    RefreshDevices();
+                }
             }
             RefreshEvents();
         }                

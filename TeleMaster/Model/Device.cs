@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace TeleMaster.DAO
 {
@@ -88,6 +89,22 @@ namespace TeleMaster.DAO
         {
             get { return name; }
             set { name = value; }
-        }        
+        }
+        public void LogEventToFile(string message)
+        {
+            string filePath = "logs";
+            if(!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            string fileName = this.Name + "_" + DateTime.Now.Year + "_"
+                                         + DateTime.Now.Month + "_"
+                                         + DateTime.Now.Day + ".log";
+            string fileFullName = filePath + @"\" + fileName;
+
+            TextWriter stream = new StreamWriter(fileFullName, true);
+            stream.WriteLine(message);
+            stream.Close();
+        }
     }
 }
