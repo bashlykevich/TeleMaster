@@ -179,6 +179,12 @@ namespace TeleMaster
             RefreshEvents();            
             RefreshDevices();
         }
+        void VerifyAllEvents(Device device)
+        {
+            Monitor.Instance.Events.RemoveAll(e => e.DeviceID == device.ID);
+            RefreshEvents();
+            RefreshDevices();
+        }
 
         #region HANDLERS
         private void cmDevices_Delete_Click(object sender, RoutedEventArgs e)
@@ -187,7 +193,12 @@ namespace TeleMaster
                 return;
             DeleteDevice(lsDisplay.SelectedItem as Device);
         }
-
+        private void cmDevices_VerifyEvents_Click(object sender, RoutedEventArgs e)
+        {
+            if (lsDisplay.SelectedItem == null)
+                return;
+            VerifyAllEvents(lsDisplay.SelectedItem as Device);
+        }
         private void lbDevices_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (lsDisplay.SelectedItem == null)
@@ -230,5 +241,7 @@ namespace TeleMaster
             VerifyEvent(ev);
         }
         #endregion
+
+      
     }
 }

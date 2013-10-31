@@ -36,8 +36,9 @@
                     ItemsSource="{Binding}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Name="cmDevices_Create" Header="Добавить" Click="cmDevices_Create_Click" />
-                        <MenuItem Name="cmDevices_Delete" Header="Удалить" Click="cmDevices_Delete_Click" />
+                        <MenuItem Name="cmDevices_Create" Header="Добавить устройство" Click="cmDevices_Create_Click" />
+                        <MenuItem Name="cmDevices_Delete" Header="Удалить устройство" Click="cmDevices_Delete_Click" />
+                        <MenuItem Name="cmDevices_VerifyEvents" Header="Очистить события устройства" Click="cmDevices_VerifyEvents_Click" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
