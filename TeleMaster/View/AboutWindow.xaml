@@ -2,11 +2,41 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         ResizeMode="NoResize"        
+        WindowStyle="ToolWindow"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
         Title="О программе" 
-        Height="300" Width="300">
-    <Grid>
-        
+        Height="240" Width="300">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0"
+               Margin="3"
+               Name="image1" Stretch="Fill" Width="180" Source="/TeleMaster;component/Img/zachet_full.jpg" />
+        <TextBlock Grid.Row="1"
+                   Margin="3"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center">
+                ПО "Мониторинг телесканеров"
+            </TextBlock>
+        <TextBlock Grid.Row="2"
+                   Margin="3"
+                   TextWrapping="Wrap">Разработка и поддержка: <Hyperlink NavigateUri="mailto:bash@netland.by">bash@netland.by</Hyperlink></TextBlock>
+        <TextBlock Grid.Row="3"
+                   HorizontalAlignment="Center"
+                   Margin="3">Все права защищены.</TextBlock>
+        <TextBlock Grid.Row="4"
+                   HorizontalAlignment="Center"
+                   Margin="3">© ЧТУП "Зачёт" 2013</TextBlock>
+        <TextBlock Grid.Row="5"
+                   HorizontalAlignment="Center"
+                   Margin="3"><Hyperlink NavigateUri="http://zachot.by">http://zachot.by</Hyperlink></TextBlock>
     </Grid>
 </Window>
