@@ -18,8 +18,9 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="24" />
-            <RowDefinition Height="0.5*"/>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.5*" MinHeight="130" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="0.5*" MinHeight="100"/>
             <RowDefinition Height="22" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
@@ -30,7 +31,15 @@
         </Menu>
         <Grid Grid.Row="1"
               Grid.Column="0">
-            <ListBox 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock 
+                Grid.Row="0"
+                Margin="3"
+                Text="Устройства" />
+            <ListBox Grid.Row="1"
                     x:Name="lsDisplay"                                 
                     MouseDoubleClick="lsDisplay_MouseDoubleClick"
                     ItemsSource="{Binding}">
@@ -96,14 +105,19 @@
                 </ListBox.ItemsPanel>
             </ListBox>
         </Grid>
-        <Grid Grid.Row="2"
+        <GridSplitter Grid.Row="2" 
+                      Height="3"
+                      Background="DarkGray"
+                      HorizontalAlignment="Stretch" />
+        <Grid Grid.Row="3"
               Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="24"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock 
+            <TextBlock                 
                 Grid.Row="0"
+                Margin="2"
                 Text="Актуальные события" />
             <ListView 
                 Name="lvDeviceLog"
@@ -125,8 +139,7 @@
                 </ListView.ContextMenu>
             </ListView>
         </Grid>
-        <StatusBar 
-            Grid.Row="3" 
+        <StatusBar Grid.Row="4" 
             HorizontalAlignment="Right">
             <StatusBarItem>
                 <TextBlock Name="stTime" Text="Старт системы" Width="100"/>
