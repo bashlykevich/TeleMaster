@@ -46,7 +46,9 @@
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="cmDevices_Create" Header="Добавить устройство" Click="cmDevices_Create_Click" />
+                        <MenuItem Name="cmDevices_Edit" Header="Редактировать устройство" Click="cmDevices_Edit_Click" />
                         <MenuItem Name="cmDevices_Delete" Header="Удалить устройство" Click="cmDevices_Delete_Click" />
+                        <MenuItem Name="cmDevices_Events" Header="История событий устройства" Click="cmDevices_Events_Click" />
                         <MenuItem Name="cmDevices_VerifyEvents" Header="Очистить события устройства" Click="cmDevices_VerifyEvents_Click" />
                     </ContextMenu>
                 </ListBox.ContextMenu>

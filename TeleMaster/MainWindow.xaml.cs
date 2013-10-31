@@ -200,8 +200,18 @@ namespace TeleMaster
             RefreshEvents();
             RefreshDevices();
         }
-
+        void ShowDeviceEventsHistory(Device device)
+        {
+            DeviceEventsWindow w = new DeviceEventsWindow(device);
+            w.ShowDialog();
+        }
         #region HANDLERS
+        private void cmDevices_Events_Click(object sender, RoutedEventArgs e)
+        {
+             if (lsDisplay.SelectedItem == null)
+                return;
+             ShowDeviceEventsHistory(lsDisplay.SelectedItem as Device);            
+        }
         private void cmDevices_Delete_Click(object sender, RoutedEventArgs e)
         {
             if (lsDisplay.SelectedItem == null)
@@ -255,8 +265,12 @@ namespace TeleMaster
             Event ev = lvDeviceLog.SelectedItem as Event;
             VerifyEvent(ev);
         }
+        private void cmDevices_Edit_Click(object sender, RoutedEventArgs e)
+        {
+            if (lsDisplay.SelectedItem == null)
+                return;
+            EditDevice(lsDisplay.SelectedItem as Device);
+        }
         #endregion
-
-      
     }
 }
