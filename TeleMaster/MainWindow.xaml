@@ -102,7 +102,9 @@
                 </ListBox.ItemTemplate>
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="10" IsItemsHost="True" />
+                        <WrapPanel Margin="10"
+                                   Width="980"
+                                   IsItemsHost="True" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
             </ListBox>
@@ -143,6 +145,9 @@
         </Grid>
         <StatusBar Grid.Row="4" 
             HorizontalAlignment="Right">
+            <StatusBarItem>
+                <TextBlock Name="stState" Text="000" Width="300"/>
+            </StatusBarItem>
             <StatusBarItem>
                 <TextBlock Name="stTime" Text="Старт системы" Width="100"/>
             </StatusBarItem>

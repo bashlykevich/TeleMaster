@@ -97,9 +97,13 @@ namespace TeleMaster
                 {                    
                     // read file
                     string filePath = device.EventSource;
+                    int d = DateTime.Now.Day;
+                    string dd = d.ToString();
+                    if (d < 10)
+                        dd = "0" + d;
                     string fileName = "history_" + DateTime.Now.Year + "_"
                                                  + DateTime.Now.Month + "_"
-                                                 + DateTime.Now.Day + ".log";
+                                                 + dd + ".log";
                     string fileFullName = filePath + @"\" + fileName;
                     // проверить, доступна ли указанная директория
                     if (!Directory.Exists(filePath))
