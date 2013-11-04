@@ -138,8 +138,7 @@ namespace TeleMaster
             {
                 if (!device.IsDisconnected)
                 {
-                    string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss")
-                                        + "\tАдрес " + device.Host + " недоступен!";
+                    string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tАдрес " + device.Host + " недоступен!";
                     device.LogEventToFile(message);
                     Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
                     device.IsDisconnected = true;
@@ -150,31 +149,56 @@ namespace TeleMaster
             if (device.IsDisconnected)
             {
                 string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tСоединение восстановлено.";
-                Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
-
-                message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tДоступ восстановлен.";
+                Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));                
                 device.LogEventToFile(message);
-
                 device.IsDisconnected = false;
             }
             if (device.DeviceEnabledAnalogue)
             {
+                string dir = "logs_a";
+                // проверка доступности директории с логами
+                string dirPath = @"\\" + device.Host + @"\" + dir;
+                if (!Directory.Exists(dirPath))
+                {
+                    if (!device.IsDisconnected)
+                    {
+                        string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tЛог-файл по адресу " + dirPath + " недоступен!";
+                        device.LogEventToFile(message);
+                        Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                        device.IsDisconnected = true;
+                    }
+                    return;
+                }               
                 if (device.LastReadDateForAnalogue.Date != DateTime.Now.Date)
                 {
                     device.LastReadRowIndexForAnalogue = 0;
                     device.LastReadDateForAnalogue = DateTime.Now.Date;
                 }
-                string dir = "logs_a";
+                
                 device.LastReadRowIndexForAnalogue = ReadRemoteLogFile(dir, device.LastReadRowIndexForAnalogue, device, EventType.AlertForAnalogue);
             }
             if (device.DeviceEnabledDigital)
             {
+                // проверка доступности директории с логами
+                string dir = "logs_d";
+                // проверка доступности директории с логами
+                string dirPath = @"\\" + device.Host + @"\" + dir;
+                if (!Directory.Exists(dirPath))
+                {
+                    if (!device.IsDisconnected)
+                    {
+                        string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tЛог-файл по адресу " + dirPath + " недоступен!";
+                        device.LogEventToFile(message);
+                        Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                        device.IsDisconnected = true;
+                    }
+                    return;
+                }
                 if (device.LastReadDateForDigital.Date != DateTime.Now.Date)
                 {
                     device.LastReadRowIndexForDigital = 0;
                     device.LastReadDateForDigital = DateTime.Now.Date;
                 }
-                string dir = "logs_d";
                 device.LastReadRowIndexForDigital = ReadRemoteLogFile(dir, device.LastReadRowIndexForDigital, device, EventType.AlertForDigital);
             }
             if (device.DeviceEnabledUPS)
@@ -216,7 +240,7 @@ namespace TeleMaster
         }
         void CheckDeviceEvents(object sender, DoWorkEventArgs e)
         {
-            int updateInterval = Monitor.Instance.UpdateInterval * 1000; // seconds to milliseconds
+            int updateInterval = Monitor.Instance.UpdateInterval; // milliseconds
             while (true)
             {
                 if (this.bwDevices.CancellationPending)

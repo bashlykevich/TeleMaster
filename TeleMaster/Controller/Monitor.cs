@@ -36,12 +36,11 @@ namespace TeleMaster.Management
         {
             get { return devices; }            
         }
-        int updateInterval = 2; // seconds
+        int updateInterval = 2000; // // milliseconds
 
         public int UpdateInterval
         {
-            get { return updateInterval; }
-            set { updateInterval = value; }
+            get { return updateInterval; }            
         }
 
         private void LoadDevices()
