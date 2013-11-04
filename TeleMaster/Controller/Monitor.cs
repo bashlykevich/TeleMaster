@@ -46,6 +46,7 @@ namespace TeleMaster.Management
 
         private void LoadDevices()
         {
+            devices = new List<Device>();
             if(File.Exists(filename))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Device>));

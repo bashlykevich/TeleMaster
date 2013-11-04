@@ -10,7 +10,7 @@
         Height="600"
         Title="Мониторинг телесканеров">
     <Window.Resources>
-        <helpers:VisibilityConverter x:Key="VisibilityConverter"></helpers:VisibilityConverter>        
+        <helpers:VisibilityConverter x:Key="VisibilityConverter"></helpers:VisibilityConverter>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
@@ -27,6 +27,10 @@
             <MenuItem Header="Файл">
                 <MenuItem Header="О программе" Name="miMainAbout" Click="miMainAbout_Click" />
                 <MenuItem Header="Выход" Name="miMainExit" Click="miMainExit_Click" />
+            </MenuItem>
+            <MenuItem Header="Мониторинг">
+                <MenuItem Header="Старт" Name="miMonitorStart" Click="miMonitorStart_Click" />
+                <MenuItem Header="Стоп" Name="miMonitorStop" Click="miMonitorStop_Click" IsEnabled="false" />
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1"
@@ -45,9 +49,9 @@
                     ItemsSource="{Binding}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Name="cmDevices_Create" Header="Добавить устройство" Click="cmDevices_Create_Click" />
-                        <MenuItem Name="cmDevices_Edit" Header="Редактировать устройство" Click="cmDevices_Edit_Click" />
-                        <MenuItem Name="cmDevices_Delete" Header="Удалить устройство" Click="cmDevices_Delete_Click" />
+                        <MenuItem Name="cmDevices_Create" IsEnabled="True" Header="Добавить устройство" Click="cmDevices_Create_Click" />
+                        <MenuItem Name="cmDevices_Edit" IsEnabled="True" Header="Редактировать устройство" Click="cmDevices_Edit_Click" />
+                        <MenuItem Name="cmDevices_Delete" IsEnabled="True" Header="Удалить устройство" Click="cmDevices_Delete_Click" />
                         <MenuItem Name="cmDevices_Events" Header="История событий устройства" Click="cmDevices_Events_Click" />
                         <MenuItem Name="cmDevices_VerifyEvents" Header="Очистить события устройства" Click="cmDevices_VerifyEvents_Click" />
                     </ContextMenu>
@@ -55,48 +59,126 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="1"                              
-                              Width="60">
-                            <Grid Margin="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>                                                               
-                                <Image Grid.Row="0" 
-                                       Canvas.ZIndex="1"
-                                       Visibility="{Binding TypeIsTelescanerA, 
-                                            Converter={StaticResource VisibilityConverter}}"
+                              Width="180">
+                            <Border BorderThickness="1"
+                                    CornerRadius="20"
+                                    BorderBrush="DarkGray">
+                                <Grid Margin="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Row="0" 
+                                       Grid.Column="0"
+                                       Canvas.ZIndex="1"                                       
+                                       Visibility="Visible"
                                        Source="Img\client_a.png" />
-                                <Image Grid.Row="0" 
+                                    <Rectangle
+                                        Canvas.ZIndex="2"
+                                        Visibility="{Binding DeviceDisabledAnalogue, Converter={StaticResource VisibilityConverter}}"
+                                        Fill="Black"
+                                        Opacity="0.2"
+                                        RadiusX="20"
+                                        RadiusY="20"
+                                        Grid.Column="0"
+                                        Grid.Row="0"/>
+                                    <Image 
+                                        Grid.Row="0" 
+                                        Grid.Column="0"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding DeviceAnalogueHasAlerts, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\alert.png" />
+                                    <Image
+                                        Grid.Row="0" 
+                                        Grid.Column="0"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\disconnect.png" />
+                                    
+                                    <Image Grid.Row="0" 
+                                       Grid.Column="1"
                                        Canvas.ZIndex="1"
-                                       Visibility="{Binding TypeIsTelescanerD, 
-                                            Converter={StaticResource VisibilityConverter}}"
+                                       Visibility="Visible"
                                        Source="Img\client_d.png" />
-                                <Image Grid.Row="0"
+                                    <Rectangle
+                                        Visibility="{Binding DeviceDisabledDigital, Converter={StaticResource VisibilityConverter}}"
+                                        Canvas.ZIndex="2"
+                                        Fill="Black"
+                                        Opacity="0.2"
+                                        RadiusX="20"
+                                        RadiusY="20"
+                                        Grid.Column="1"
+                                        Grid.Row="0"/>
+                                    <Image 
+                                        Grid.Row="0" 
+                                        Grid.Column="1"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding DeviceDigitalHasAlerts, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\alert.png" />
+                                    <Image
+                                        Grid.Row="0" 
+                                        Grid.Column="1"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\disconnect.png" />
+                                    
+                                    <Image Grid.Row="0"
+                                       Grid.Column="2"
                                        Canvas.ZIndex="1"
                                        Width="40"
-                                       Visibility="{Binding TypeIsUPS, 
-                                            Converter={StaticResource VisibilityConverter}}"
+                                       Visibility="Visible"
                                        Source="Img\ups.png" />
-                                <Image 
-                                    Grid.Row="0" 
-                                    Canvas.ZIndex="2"
-                                    Width="25"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Visibility="{Binding HasAlerts, Converter={StaticResource VisibilityConverter}}"
-                                    Source="Img\alert.png" />
-                                <Image 
-                                    Grid.Row="0" 
-                                    Canvas.ZIndex="3"
-                                    Width="25"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
-                                    Source="Img\disconnect.png" />
-                                <TextBlock Grid.Row="1"
-                                    HorizontalAlignment="Center"
+                                    <Rectangle
+                                        Visibility="{Binding DeviceDisabledUPS, Converter={StaticResource VisibilityConverter}}"
+                                        Canvas.ZIndex="2"
+                                        Fill="Black"
+                                        Opacity="0.2"
+                                        RadiusX="20"
+                                        RadiusY="20"
+                                        Grid.Column="2"
+                                        Grid.Row="0"/>
+                                    <Image 
+                                        Grid.Row="0" 
+                                        Grid.Column="2"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding DeviceUpsHasAlerts, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\alert.png" />
+                                    <Image
+                                        Grid.Row="0" 
+                                        Grid.Column="2"
+                                        Canvas.ZIndex="3"
+                                        Width="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Visibility="{Binding DeviceUpsIsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                        Source="Img\disconnect.png" />
+                                    <TextBlock Grid.Row="1"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="3"
+                                    HorizontalAlignment="Center"                                           
                                     Text="{Binding Name}" />
-                            </Grid>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -133,9 +215,9 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="100" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />
-                        <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />                        
+                        <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />
                     </GridView>
-                </ListView.View>                   
+                </ListView.View>
                 <ListView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="miVerifyAllEvents" Header="Убрать все события" Click="miVerifyAllEvents_Click"/>
@@ -149,7 +231,7 @@
                 <TextBlock Name="stState" Text="000" Width="300"/>
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock Name="stTime" Text="Старт системы" Width="100"/>
+                <TextBlock Name="stTime" Text="" Width="100"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>

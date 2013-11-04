@@ -6,33 +6,120 @@ using System.IO;
 
 namespace TeleMaster.DAO
 {
-    public enum DeviceType {TelescanerA=0, TelescanerD=1, UPS=2};
-
     public class Device
     {
-        DeviceType type = DeviceType.TelescanerA;
+        Guid id;
+        // Название точки (адрес)
+        string name;
+        // адрес сервера
+        string host = "";
+        bool deviceEnabledAnalogue;
+        bool deviceEnabledDigital;
+        bool deviceEnabledUPS;        
+
+        #region getters-setters
+        public Guid ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+        public string Host
+        {
+            get { return host; }
+            set { host = value; }
+        }
+        public bool DeviceEnabledAnalogue
+        {
+            get { return deviceEnabledAnalogue; }
+            set { deviceEnabledAnalogue = value; }
+        }
+        public bool DeviceEnabledDigital
+        {
+            get { return deviceEnabledDigital; }
+            set { deviceEnabledDigital = value; }
+        }
+        public bool DeviceEnabledUPS
+        {
+            get { return deviceEnabledUPS; }
+            set { deviceEnabledUPS = value; }
+        }
+        public bool DeviceDisabledAnalogue
+        {
+            get { return !deviceEnabledAnalogue; }            
+        }
+        public bool DeviceDisabledDigital
+        {
+            get { return !deviceEnabledDigital; }            
+        }
+        public bool DeviceDisabledUPS
+        {
+            get { return !deviceEnabledUPS; }            
+        }
+        #endregion
+
+
+        // Analog
+        int lastReadRowIndexForAnalogue = 0;
+
+        public int LastReadRowIndexForAnalogue
+        {
+            get { return lastReadRowIndexForAnalogue; }
+            set { lastReadRowIndexForAnalogue = value; }
+        }
+        DateTime lastReadDateForAnalogue;
+
+        public DateTime LastReadDateForAnalogue
+        {
+            get { return lastReadDateForAnalogue; }
+            set { lastReadDateForAnalogue = value; }
+        }
+
+        // Digital
+        int lastReadRowIndexForDigital = 0;
+
+        public int LastReadRowIndexForDigital
+        {
+            get { return lastReadRowIndexForDigital; }
+            set { lastReadRowIndexForDigital = value; }
+        }
+        DateTime lastReadDateForDigital;
+
+        public DateTime LastReadDateForDigital
+        {
+            get { return lastReadDateForDigital; }
+            set { lastReadDateForDigital = value; }
+        }
+        // UPS
+
         
-        public bool TypeIsTelescanerA
+        // флаги для отображения
+        bool deviceAnalogueHasAlerts = false;
+
+        public bool DeviceAnalogueHasAlerts
         {
-            get
-            {
-                return (type == DeviceType.TelescanerA);
-            }
+            get { return deviceAnalogueHasAlerts; }
+            set { deviceAnalogueHasAlerts = value; }
         }
-        public bool TypeIsTelescanerD
+        bool deviceDigitalHasAlerts = false;
+
+        public bool DeviceDigitalHasAlerts
         {
-            get
-            {
-                return (type == DeviceType.TelescanerD);
-            }
+            get { return deviceDigitalHasAlerts; }
+            set { deviceDigitalHasAlerts = value; }
         }
-        public bool TypeIsUPS
+        bool deviceUpsHasAlerts = false;
+
+        public bool DeviceUpsHasAlerts
         {
-            get
-            {
-                return (type == DeviceType.UPS);
-            }
+            get { return deviceUpsHasAlerts; }
+            set { deviceUpsHasAlerts = value; }
         }
+
         bool isDisconnected = false;
 
         public bool IsDisconnected
@@ -40,56 +127,31 @@ namespace TeleMaster.DAO
             get { return isDisconnected; }
             set { isDisconnected = value; }
         }
+        bool deviceUpsIsDisconnected = false;
 
-        public DeviceType Type
+        public bool DeviceUpsIsDisconnected
         {
-            get { return type; }
-            set { type = value; }
-        }
-        Guid id = Guid.NewGuid();
-        public Guid ID
-        {
-            get { return id; }
-            set { id = value; }
-        }
+            get { return deviceUpsIsDisconnected; }
+            set { deviceUpsIsDisconnected = value; }
+        }        
+        
+                        
         public Device()
         {
             
         }
-        public Device(string name, string logSrc, int type)
+        public Device(string name, string host, bool enabledAnalogue, bool enabledDigital, bool enabledUps)
         {
             this.name = name;
-            this.eventSource = logSrc;
-            this.type = (DeviceType)type;
-        }
-        string name;
-        string eventSource;
-        bool hasAlerts = false;
+            this.host = host;
+            this.deviceEnabledAnalogue = enabledAnalogue;
+            this.deviceEnabledDigital = enabledDigital;
+            this.deviceEnabledUPS = enabledUps;
 
-        int lastReadRowIndex = 0;
-
-        public int LastReadRowIndex
-        {
-            get { return lastReadRowIndex; }
-            set { lastReadRowIndex = value; }
-        }
-
-        public bool HasAlerts
-        {
-            get { return hasAlerts; }
-            set { hasAlerts = value; }
-        }
-        public string EventSource
-        {
-            get { return eventSource; }
-            set { eventSource = value; }
-        }
-
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+            this.lastReadDateForAnalogue = DateTime.Now.Date;
+            this.lastReadDateForDigital = DateTime.Now.Date;
+        }                
+        
         public void LogEventToFile(string message)
         {
             string filePath = "logs";

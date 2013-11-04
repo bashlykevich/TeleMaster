@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TeleMaster.DAO;
 using TeleMaster.Management;
+using System.Net;
 
 namespace TeleMaster.View
 {
@@ -33,17 +34,29 @@ namespace TeleMaster.View
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
         {
+            IPAddress ip;
+            if (!IPAddress.TryParse(edtSource.Text, out ip))
+            {
+                MessageBox.Show("Ошибка формата IP-адреса!");
+                return;
+            }
+            bool enabledAnalogue = edtEnabledAnalogue.IsChecked.HasValue ? edtEnabledAnalogue.IsChecked.Value : false;
+            bool enabledDigital = edtEnabledDigital.IsChecked.HasValue ? edtEnabledDigital.IsChecked.Value : false;
+            bool enabledUps = edtEnabledUPS.IsChecked.HasValue ? edtEnabledUPS.IsChecked.Value : false;
+
             if (this.item == null)
             { //create
-                Device d = new Device(edtName.Text, edtSource.Text, edtType.SelectedIndex);
+                Device d = new Device(edtName.Text, edtSource.Text, enabledAnalogue, enabledDigital, enabledUps);
                 Monitor.Instance.Devices.Add(d);                
             }
             else
             { // edit                
                 int ind = Monitor.Instance.Devices.IndexOf(this.item);
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Name = edtName.Text;
-                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).EventSource = edtSource.Text;
-                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Type = (DeviceType)edtType.SelectedIndex;                
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Host = edtSource.Text;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledAnalogue = enabledAnalogue;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledDigital = enabledDigital;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledUPS = enabledUps;
             }
             Monitor.Instance.SaveDevices();
             this.Close();
@@ -54,8 +67,10 @@ namespace TeleMaster.View
             if (this.item != null)
             {
                 edtName.Text = item.Name;
-                edtSource.Text = item.EventSource;
-                edtType.SelectedIndex = (int)item.Type;
+                edtSource.Text = item.Host;
+                edtEnabledAnalogue.IsChecked = item.DeviceEnabledAnalogue;
+                edtEnabledDigital.IsChecked = item.DeviceEnabledDigital;
+                edtEnabledUPS.IsChecked = item.DeviceEnabledUPS;
             }
         }
     }
