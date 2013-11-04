@@ -200,10 +200,34 @@ namespace TeleMaster
                     device.LastReadDateForDigital = DateTime.Now.Date;
                 }
                 device.LastReadRowIndexForDigital = ReadRemoteLogFile(dir, device.LastReadRowIndexForDigital, device, EventType.AlertForDigital);
-            }
-            if (device.DeviceEnabledUPS)
+            }        
+        }
+        void GetUPSInfo(Device device)
+        {
+            if (device.DeviceDisabledUPS)
+                return;
+            // ping server
+            Ping p = new Ping();
+            PingReply reply = p.Send(device.UpsHost);
+            if (reply.Status != IPStatus.Success)
             {
-            }            
+                if (!device.DeviceUpsIsDisconnected)
+                {
+                    string message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tИБП по адресу " + device.Host + " недоступен!";
+                    device.LogEventToFile(message);
+                    Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                    device.DeviceUpsIsDisconnected = true;
+                }
+                return;
+            }
+            // если был отключен, а теперь появился
+            if (device.DeviceUpsIsDisconnected)
+            {
+                string message = "ИБП" + DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\tСоединение восстановлено.";
+                Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, EventType.Disconnect));
+                device.LogEventToFile(message);
+                device.DeviceUpsIsDisconnected = false;
+            }
         }
         int ReadRemoteLogFile(string dir, int lastReadIndex, Device device, EventType eventType)
         {
@@ -261,6 +285,7 @@ namespace TeleMaster
         {
             Device device = e.Argument as Device;
             GetNewEvents(device);
+            GetUPSInfo(device);
         }
 
         void VerifyEvent(Event ev)

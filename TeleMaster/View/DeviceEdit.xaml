@@ -5,13 +5,14 @@
         WindowStyle="ToolWindow"
         Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
-        Title="Устройство" Height="240" Width="400">
+        Title="Устройство" Height="260" Width="400">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -25,26 +26,31 @@
                Grid.Column="0"
                VerticalAlignment="Center"
                Grid.Row="0"/>
-        <Label Content="IP" 
+        <Label Content="IP телесканеров" 
                HorizontalAlignment="Right"
                Grid.Column="0"
                VerticalAlignment="Center"
                Grid.Row="1"/>
+        <Label Content="IP ИБП" 
+               HorizontalAlignment="Right"
+               Grid.Column="0"
+               VerticalAlignment="Center"
+               Grid.Row="2"/>
         <Label Content="Аналоговый Телесканер" 
                Grid.Column="0"
                VerticalAlignment="Center"
                HorizontalAlignment="Right"
-               Grid.Row="2"/>
+               Grid.Row="3"/>
         <Label Content="Цифровой Телесканер" 
                Grid.Column="0"
                VerticalAlignment="Center"
                HorizontalAlignment="Right"
-               Grid.Row="3"/>
+               Grid.Row="4"/>
         <Label Content="ИБП" 
                VerticalAlignment="Center"
                HorizontalAlignment="Right"
                Grid.Column="0"
-               Grid.Row="4"/>
+               Grid.Row="5"/>
         
         <TextBox Name="edtName" 
                  Grid.Column="1"
@@ -54,24 +60,28 @@
                  Grid.Column="1"
                  Grid.Row="1"
                  Margin="3"/>
+        <TextBox Name="edtUPSSource" 
+                 Grid.Column="1"
+                 Grid.Row="2"
+                 Margin="3"/>
         <CheckBox Name="edtEnabledAnalogue"
-                  Grid.Row="2"
-                  Grid.Column="1"
-                  VerticalAlignment="Center"
-                  Content="Включён"/>
-        <CheckBox Name="edtEnabledDigital"
                   Grid.Row="3"
                   Grid.Column="1"
                   VerticalAlignment="Center"
                   Content="Включён"/>
-        <CheckBox Name="edtEnabledUPS"
+        <CheckBox Name="edtEnabledDigital"
                   Grid.Row="4"
+                  Grid.Column="1"
+                  VerticalAlignment="Center"
+                  Content="Включён"/>
+        <CheckBox Name="edtEnabledUPS"
+                  Grid.Row="5"
                   Grid.Column="1"
                   VerticalAlignment="Center"
                   Content="Включён"/>
         <Button Name="btnOk" 
                 Grid.Column="1"
-                Grid.Row="5" 
+                Grid.Row="6" 
                 Margin="3"
                 Width="100"
                 HorizontalAlignment="Right"

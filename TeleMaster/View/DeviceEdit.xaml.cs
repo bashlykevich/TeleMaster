@@ -37,16 +37,23 @@ namespace TeleMaster.View
             IPAddress ip;
             if (!IPAddress.TryParse(edtSource.Text, out ip))
             {
-                MessageBox.Show("Ошибка формата IP-адреса!");
+                MessageBox.Show("Ошибка формата IP-адреса сервера телесканеров!");
                 return;
             }
+            IPAddress ipUPS;
+            if (!IPAddress.TryParse(edtUPSSource.Text, out ipUPS))
+            {
+                MessageBox.Show("Ошибка формата IP-адреса ИБП!");
+                return;
+            }
+
             bool enabledAnalogue = edtEnabledAnalogue.IsChecked.HasValue ? edtEnabledAnalogue.IsChecked.Value : false;
             bool enabledDigital = edtEnabledDigital.IsChecked.HasValue ? edtEnabledDigital.IsChecked.Value : false;
             bool enabledUps = edtEnabledUPS.IsChecked.HasValue ? edtEnabledUPS.IsChecked.Value : false;
 
             if (this.item == null)
             { //create
-                Device d = new Device(edtName.Text, edtSource.Text, enabledAnalogue, enabledDigital, enabledUps);
+                Device d = new Device(edtName.Text, edtSource.Text, edtUPSSource.Text, enabledAnalogue, enabledDigital, enabledUps);
                 Monitor.Instance.Devices.Add(d);                
             }
             else
@@ -54,6 +61,7 @@ namespace TeleMaster.View
                 int ind = Monitor.Instance.Devices.IndexOf(this.item);
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Name = edtName.Text;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Host = edtSource.Text;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).UpsHost = edtUPSSource.Text;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledAnalogue = enabledAnalogue;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledDigital = enabledDigital;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledUPS = enabledUps;
@@ -68,6 +76,7 @@ namespace TeleMaster.View
             {
                 edtName.Text = item.Name;
                 edtSource.Text = item.Host;
+                edtUPSSource.Text = item.UpsHost;
                 edtEnabledAnalogue.IsChecked = item.DeviceEnabledAnalogue;
                 edtEnabledDigital.IsChecked = item.DeviceEnabledDigital;
                 edtEnabledUPS.IsChecked = item.DeviceEnabledUPS;

@@ -14,6 +14,13 @@ namespace TeleMaster.DAO
         string name;
         // адрес сервера
         string host = "";
+        string upsHost = "";
+
+        public string UpsHost
+        {
+            get { return upsHost; }
+            set { upsHost = value; }
+        }
         bool deviceEnabledAnalogue;
         bool deviceEnabledDigital;
         bool deviceEnabledUPS;        
@@ -177,10 +184,11 @@ namespace TeleMaster.DAO
         {
             
         }
-        public Device(string name, string host, bool enabledAnalogue, bool enabledDigital, bool enabledUps)
+        public Device(string name, string host, string hostUps, bool enabledAnalogue, bool enabledDigital, bool enabledUps)
         {
             this.name = name;
             this.host = host;
+            this.upsHost = hostUps;
             this.deviceEnabledAnalogue = enabledAnalogue;
             this.deviceEnabledDigital = enabledDigital;
             this.deviceEnabledUPS = enabledUps;
