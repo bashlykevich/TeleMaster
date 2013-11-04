@@ -45,6 +45,7 @@ namespace TeleMaster
             }
             Monitor.Instance.SaveDevices();
         }
+       
         public MainWindow()
         {
             InitializeComponent();
@@ -73,13 +74,11 @@ namespace TeleMaster
                 }
                 lsDisplay.Dispatcher.Invoke(new Action(() =>
                 {
-                    lsDisplay.DataContext = null;
-                    lsDisplay.DataContext = Monitor.Instance.Devices;
+                    RefreshDevices();
                 }));
                 lvDeviceLog.Dispatcher.Invoke(new Action(() =>
                     {
-                        lvDeviceLog.DataContext = null;
-                        lvDeviceLog.DataContext = Monitor.Instance.Events;
+                        RefreshEvents();
                     }));
                 if (blinker)
                 {
@@ -118,27 +117,9 @@ namespace TeleMaster
             RefreshDevices();
             RefreshEvents();
         }
+        
         void RefreshDevices()
-        {
-            foreach (Device device in Monitor.Instance.Devices)
-            {
-                if (Monitor.Instance.Events.Exists(e => e.DeviceID == device.ID && e.Type == EventType.AlertForAnalogue))
-                {
-                    device.DeviceAnalogueHasAlerts = true;
-                }
-                else
-                {
-                    device.DeviceAnalogueHasAlerts = false;
-                }
-                if (Monitor.Instance.Events.Exists(e => e.DeviceID == device.ID && e.Type == EventType.AlertForDigital))
-                {
-                    device.DeviceDigitalHasAlerts = true;
-                }
-                else
-                {
-                    device.DeviceDigitalHasAlerts = false;
-                }
-            }
+        {            
             lsDisplay.DataContext = null;
             lsDisplay.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Name);
         }
@@ -244,8 +225,7 @@ namespace TeleMaster
                     return;
                 }
                 foreach (Device device in Monitor.Instance.Devices)
-                {
-                    stState.Dispatcher.Invoke(new Action(() => stState.Text = device.Name));
+                {                    
                     BackgroundWorker deviceWorker = new BackgroundWorker();
                     deviceWorker.DoWork += new DoWorkEventHandler(deviceWorker_DoWork);
                     deviceWorker.RunWorkerAsync(device);
@@ -266,9 +246,7 @@ namespace TeleMaster
             if (!Monitor.Instance.Events.Exists(e => e.DeviceID == deviceID))
             {
                 if (Monitor.Instance.Devices.Exists(d => d.ID == deviceID))
-                {
-                    Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).DeviceAnalogueHasAlerts = false;
-                    Monitor.Instance.Devices.FirstOrDefault(d => d.ID == deviceID).DeviceDigitalHasAlerts = false;
+                {                    
                     Monitor.Instance.SaveDevices();
                     RefreshDevices();
                 }

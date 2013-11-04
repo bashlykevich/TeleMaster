@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using TeleMaster.Helpers;
 
 namespace TeleMaster.DAO
 {
@@ -97,31 +98,63 @@ namespace TeleMaster.DAO
         // UPS
 
         
-        // флаги для отображения
-        bool deviceAnalogueHasAlerts = false;
+        // флаги для отображения        
 
         public bool DeviceAnalogueHasAlerts
         {
-            get { return deviceAnalogueHasAlerts; }
-            set { deviceAnalogueHasAlerts = value; }
+            get
+            {
+                if (!this.deviceEnabledAnalogue)
+                    return false;
+                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.AlertForAnalogue);
+                return hasAlerts; 
+            }            
         }
-        bool deviceDigitalHasAlerts = false;
-
+        
         public bool DeviceDigitalHasAlerts
         {
-            get { return deviceDigitalHasAlerts; }
-            set { deviceDigitalHasAlerts = value; }
+            get
+            {
+                if (!this.deviceEnabledDigital)
+                    return false;
+                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.AlertForDigital);
+                return hasAlerts; 
+            }
         }
         bool deviceUpsHasAlerts = false;
 
         public bool DeviceUpsHasAlerts
         {
-            get { return deviceUpsHasAlerts; }
-            set { deviceUpsHasAlerts = value; }
+            get 
+            {
+                if (!this.deviceEnabledUPS)
+                    return false;
+                return deviceUpsHasAlerts;
+            }            
         }
-
+        
         bool isDisconnected = false;
 
+        public bool IsDisconnectedA
+        {
+            get 
+            {
+                if (this.deviceEnabledAnalogue)
+                    return isDisconnected;
+                else
+                    return false;
+            }
+        }
+        public bool IsDisconnectedD
+        {
+            get
+            {
+                if (this.deviceEnabledDigital)
+                    return isDisconnected;
+                else
+                    return false;
+            }
+        }
         public bool IsDisconnected
         {
             get { return isDisconnected; }
@@ -159,14 +192,17 @@ namespace TeleMaster.DAO
             {
                 Directory.CreateDirectory(filePath);
             }
-            string fileName = this.Name + "_" + DateTime.Now.Year + "_"
+
+            string safeName = IOHelper.GetSafeFilename(this.name);
+            string fileName = safeName + "_" + DateTime.Now.Year + "_"
                                          + DateTime.Now.Month + "_"
                                          + DateTime.Now.Day + ".log";
             string fileFullName = filePath + @"\" + fileName;
-
+            
             TextWriter stream = new StreamWriter(fileFullName, true);
             stream.WriteLine(message);
             stream.Close();
-        }
+        }       
     }
+    
 }

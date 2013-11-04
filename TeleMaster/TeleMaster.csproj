@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\IOHelper.cs" />
     <Compile Include="Helpers\VisibilityConverter.cs" />
     <Compile Include="View\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>

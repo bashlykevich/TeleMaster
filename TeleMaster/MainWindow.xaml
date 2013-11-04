@@ -103,7 +103,7 @@
                                         Width="25"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
-                                        Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                        Visibility="{Binding IsDisconnectedA, Converter={StaticResource VisibilityConverter}}"
                                         Source="Img\disconnect.png" />
                                     
                                     <Image Grid.Row="0" 
@@ -136,7 +136,7 @@
                                         Width="25"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
-                                        Visibility="{Binding IsDisconnected, Converter={StaticResource VisibilityConverter}}"
+                                        Visibility="{Binding IsDisconnectedD, Converter={StaticResource VisibilityConverter}}"
                                         Source="Img\disconnect.png" />
                                     
                                     <Image Grid.Row="0"
@@ -214,8 +214,8 @@
                 ItemsSource="{Binding}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="100" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />
-                        <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />
+                        <GridViewColumn Width="160" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />                        
+                        <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />                        
                     </GridView>
                 </ListView.View>
                 <ListView.ContextMenu>
@@ -228,7 +228,7 @@
         <StatusBar Grid.Row="4" 
             HorizontalAlignment="Right">
             <StatusBarItem>
-                <TextBlock Name="stState" Text="000" Width="300"/>
+                <TextBlock Name="stState" Text="" Width="300"/>
             </StatusBarItem>
             <StatusBarItem>
                 <TextBlock Name="stTime" Text="" Width="100"/>
