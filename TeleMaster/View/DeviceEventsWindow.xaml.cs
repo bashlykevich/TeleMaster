@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TeleMaster.DAO;
 using System.IO;
+using TeleMaster.Helpers;
 
 namespace TeleMaster.View
 {
@@ -39,9 +40,10 @@ namespace TeleMaster.View
         {
             edtLog.Items.Clear();
             string filePath = "logs";
-            string fileName = device.Name + "_" + date.Year + "_"
-                                         + date.Month + "_"
-                                         + date.Day + ".log";
+            string safeName = IOHelper.GetSafeFilename(device.Name);
+            string fileName = safeName + "_" + DateTime.Now.Year + "_"
+                                         + DateTime.Now.Month + "_"
+                                         + DateTime.Now.Day + ".log";
             string fileFullName = filePath + @"\" + fileName;
             if (File.Exists(fileFullName))
             {

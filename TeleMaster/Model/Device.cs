@@ -29,6 +29,10 @@ namespace TeleMaster.DAO
             get { return name; }
             set { name = value; }
         }
+        public string DisplayName
+        {
+            get { return name + @"/" + this.host; }
+        }
         public string Host
         {
             get { return host; }
@@ -198,11 +202,20 @@ namespace TeleMaster.DAO
                                          + DateTime.Now.Month + "_"
                                          + DateTime.Now.Day + ".log";
             string fileFullName = filePath + @"\" + fileName;
-            
-            TextWriter stream = new StreamWriter(fileFullName, true);
-            stream.WriteLine(message);
-            stream.Close();
-        }       
+            bool wasWritten = false;
+            while(!wasWritten)
+            {
+                try
+                {
+                    TextWriter stream = new StreamWriter(fileFullName, true);
+                    stream.WriteLine(message);
+                    stream.Close();
+                    wasWritten = true;
+                } catch(Exception e)
+                {
+
+                }
+            }
+        }
     }
-    
 }
