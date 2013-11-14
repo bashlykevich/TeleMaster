@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:helpers="clr-namespace:TeleMaster.Helpers"
+        xmlns:toolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
         WindowState="Maximized"        
         ResizeMode="CanResizeWithGrip"
         Loaded="Window_Loaded"
@@ -25,6 +26,7 @@
             <RowDefinition Height="0.3*" MinHeight="50"/>
             <RowDefinition Height="22" />
         </Grid.RowDefinitions>
+        
         <Menu Grid.Row="0">
             <MenuItem Header="Файл">
                 <MenuItem Header="О программе" Name="miMainAbout" Click="miMainAbout_Click" />
@@ -32,7 +34,11 @@
             </MenuItem>
             <MenuItem Header="Мониторинг">
                 <MenuItem Header="Старт" Name="miMonitorStart" Click="miMonitorStart_Click" />
-                <MenuItem Header="Стоп" Name="miMonitorStop" Click="miMonitorStop_Click" IsEnabled="false" />
+                <MenuItem Header="Стоп" Name="miMonitorStop" Click="miMonitorStop_Click" IsEnabled="false" />                
+            </MenuItem>
+            <MenuItem Header="Вид">
+                <MenuItem Header="Иконки" Name="miViewIcons" Click="miViewIcons_Click" IsChecked="True" />
+                <MenuItem Header="Список" Name="miViewList" Click="miViewList_Click" IsChecked="False" />
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1"
@@ -48,10 +54,13 @@
             <ListBox Grid.Row="1"
                     x:Name="lsDisplay"                                 
                     MouseDoubleClick="lsDisplay_MouseDoubleClick"
+                     SelectionChanged="lsDisplay_SelectionChanged"
+                     SelectionMode="Single"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ItemsSource="{Binding}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Name="cmDevices_Connect" IsEnabled="True" Header="Подключиться" Click="cmDevices_Connect_Click" />
                         <MenuItem Name="cmDevices_Create" IsEnabled="True" Header="Добавить устройство" Click="cmDevices_Create_Click" />
                         <MenuItem Name="cmDevices_Edit" IsEnabled="True" Header="Редактировать устройство" Click="cmDevices_Edit_Click" />
                         <MenuItem Name="cmDevices_Delete" IsEnabled="True" Header="Удалить устройство" Click="cmDevices_Delete_Click" />
@@ -62,7 +71,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="5"                              
-                              Width="200">
+                              Width="300">
                             <Border BorderThickness="1"
                                     CornerRadius="20"
                                     BorderBrush="DarkGray">
@@ -84,8 +93,8 @@
                                     <Rectangle
                                         Canvas.ZIndex="2"
                                         Visibility="{Binding DeviceDisabledAnalogue, Converter={StaticResource VisibilityConverter}}"
-                                        Fill="Black"
-                                        Opacity="0.2"
+                                        Fill="White"
+                                        Opacity="0.7"
                                         RadiusX="20"
                                         RadiusY="20"
                                         Grid.Column="0"
@@ -94,7 +103,7 @@
                                         Grid.Row="0" 
                                         Grid.Column="0"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
                                         Visibility="{Binding DeviceAnalogueHasAlerts, Converter={StaticResource VisibilityConverter}}"
@@ -103,7 +112,7 @@
                                         Grid.Row="0" 
                                         Grid.Column="0"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Visibility="{Binding IsDisconnectedA, Converter={StaticResource VisibilityConverter}}"
@@ -117,8 +126,8 @@
                                     <Rectangle
                                         Visibility="{Binding DeviceDisabledDigital, Converter={StaticResource VisibilityConverter}}"
                                         Canvas.ZIndex="2"
-                                        Fill="Black"
-                                        Opacity="0.2"
+                                       Fill="White"
+                                        Opacity="0.7"
                                         RadiusX="20"
                                         RadiusY="20"
                                         Grid.Column="1"
@@ -127,7 +136,7 @@
                                         Grid.Row="0" 
                                         Grid.Column="1"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
                                         Visibility="{Binding DeviceDigitalHasAlerts, Converter={StaticResource VisibilityConverter}}"
@@ -136,7 +145,7 @@
                                         Grid.Row="0" 
                                         Grid.Column="1"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Visibility="{Binding IsDisconnectedD, Converter={StaticResource VisibilityConverter}}"
@@ -145,14 +154,17 @@
                                     <Image Grid.Row="0"
                                        Grid.Column="2"
                                        Canvas.ZIndex="1"
-                                       Width="40"
+                                       Width="65"
+                                           Margin="2"
+                                       VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
                                        Visibility="Visible"
                                        Source="Img\ups.png" />
                                     <Rectangle
                                         Visibility="{Binding DeviceDisabledUPS, Converter={StaticResource VisibilityConverter}}"
                                         Canvas.ZIndex="2"
-                                        Fill="Black"
-                                        Opacity="0.2"
+                                        Fill="White"
+                                        Opacity="0.7"
                                         RadiusX="20"
                                         RadiusY="20"
                                         Grid.Column="2"
@@ -161,7 +173,7 @@
                                         Grid.Row="0" 
                                         Grid.Column="2"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
                                         Visibility="{Binding DeviceUpsHasAlerts, Converter={StaticResource VisibilityConverter}}"
@@ -170,16 +182,32 @@
                                         Grid.Row="0" 
                                         Grid.Column="2"
                                         Canvas.ZIndex="3"
-                                        Width="25"
+                                        Width="35"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Visibility="{Binding DeviceUpsIsDisconnected, Converter={StaticResource VisibilityConverter}}"
                                         Source="Img\disconnect.png" />
+                                    <StackPanel Orientation="Vertical"
+                                                VerticalAlignment="Center"                                                
+                                                Visibility="{Binding ShowUpsInfo, Converter={StaticResource VisibilityConverter}}"
+                                                Grid.Column="2"
+                                                Margin="10,0,10,0"
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                HorizontalAlignment="Center"
+                                                Canvas.ZIndex ="4">
+                                        <TextBlock Canvas.ZIndex ="4" Text="{Binding BatteryCapacityRemaining}" />
+                                        <TextBlock Canvas.ZIndex ="4" Text="{Binding BatteryVoltage}" />
+                                        <TextBlock Canvas.ZIndex ="4" Text="{Binding OutputLoad}" />
+                                        <TextBlock Canvas.ZIndex ="4" Text="{Binding BatteryStatus}" />
+                                    </StackPanel>
+                                                                       
                                     <TextBlock Grid.Row="1"
-                                           Grid.Column="0"
-                                           Grid.ColumnSpan="3"
-                                    HorizontalAlignment="Center"                                           
-                                    Text="{Binding DisplayName}" />
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="3"
+                                            HorizontalAlignment="Center"                                           
+                                            Text="{Binding DisplayName}" />                                    
+                                    
                                 </Grid>
                             </Border>
                         </Grid>
@@ -193,6 +221,24 @@
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
             </ListBox>
+            <toolkit:DataGrid Grid.Row="1"
+                              Visibility="Collapsed"
+                              x:Name="lsDisplayList"                                 
+                              ItemsSource="{Binding}"
+                              MouseDoubleClick="lsDisplayList_MouseDoubleClick"
+                              AutoGenerateColumns="False">
+                <toolkit:DataGrid.Columns>
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=Name, Mode=OneWay}" Header="Name" Width="0.2*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=Host, Mode=OneWay}" Header="Host" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=IsDisconnected, Mode=OneWay}" Header="IsDisconnected" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=UpsHost, Mode=OneWay}" Header="UpsHost" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=DeviceUpsIsDisconnected, Mode=OneWay}" Header="UpsIsDisconnected" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=Community, Mode=OneWay}" Header="Community" Width="0.1*" />                    
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=BatteryCapacityRemaining, Mode=OneWay}" Header="BC" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=BatteryVoltage, Mode=OneWay}" Header="BV" Width="0.1*" />
+                    <toolkit:DataGridTextColumn Binding="{Binding Path=OutputLoad, Mode=OneWay}" Header="OL" Width="0.1*" />
+                </toolkit:DataGrid.Columns>
+            </toolkit:DataGrid>
         </Grid>
         <GridSplitter Grid.Row="2" 
                       Height="3"
@@ -202,22 +248,31 @@
               Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="24"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock                 
-                Grid.Row="0"
-                Margin="2"
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="*"/>                
+            </Grid.RowDefinitions>           
+                <TextBlock Grid.Row="0" 
+                           HorizontalAlignment="Right"
+                           Margin="2">
+                    BC - (Battery Capacity) ёмкость батареи; BV - (Battery Voltage) напряжение батареи; OL - (Output Load) нагрузка на выходе.
+                </TextBlock>
+            <TextBlock        
+                    Grid.Row="1"
+                    Margin="2"
+                    HorizontalAlignment="Left"
                 Text="Актуальные события" />
+
             <ListView 
                 Name="lvDeviceLog"
-                Grid.Row="1"
+                Grid.Row="2"
                 VerticalAlignment="Stretch"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                 MouseDoubleClick="lvDeviceLog_MouseDoubleClick"
                 ItemsSource="{Binding}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="160" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />                        
+                        <GridViewColumn Width="160" Header="Устройство" DisplayMemberBinding="{Binding Path=DeviceName}" />
+                        <GridViewColumn Width="100" Header="Тип" DisplayMemberBinding="{Binding Path=Type}" />
                         <GridViewColumn Width="600" Header="Сообщение" DisplayMemberBinding="{Binding Path=Message}" />                        
                     </GridView>
                 </ListView.View>
@@ -226,7 +281,7 @@
                         <MenuItem Name="miVerifyAllEvents" Header="Убрать все события" Click="miVerifyAllEvents_Click"/>
                     </ContextMenu>
                 </ListView.ContextMenu>
-            </ListView>
+            </ListView>            
         </Grid>
         <StatusBar Grid.Row="4" 
             HorizontalAlignment="Right">

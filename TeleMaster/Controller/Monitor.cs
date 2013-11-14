@@ -6,6 +6,7 @@ using TeleMaster.DAO;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using System.Media;
 
 namespace TeleMaster.Management
 {
@@ -30,7 +31,23 @@ namespace TeleMaster.Management
         {
             get { return events; }            
         }
-
+        public void AddEvent(Device device, string message, EventType type)
+        {
+            if (type == EventType.Сеть)
+                message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\t" + message;
+            
+            device.LogEventToFile(message, type);
+            Monitor.Instance.Events.Add(new Event(message, device.Name, device.ID, type));
+            ///SystemSounds.Beep.Play();
+        }
+        public void AddEvent(string message, EventType type)
+        {
+            if (type == EventType.ИБП)
+                message = DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss") + "\t" + message;
+            
+            Monitor.Instance.Events.Add(new Event(message, "SNMP", Guid.Empty, type));
+            ///SystemSounds.Beep.Play();
+        }
         List<Device> devices;
         internal List<Device> Devices
         {

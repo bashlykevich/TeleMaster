@@ -5,13 +5,15 @@
         WindowStyle="ToolWindow"
         Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
-        Title="Устройство" Height="260" Width="400">
+        Title="Устройство" Height="310" Width="400">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -51,6 +53,16 @@
                HorizontalAlignment="Right"
                Grid.Column="0"
                Grid.Row="5"/>
+        <Label Content="Тип ИБП" 
+               VerticalAlignment="Center"
+               HorizontalAlignment="Right"
+               Grid.Column="0"
+               Grid.Row="6"/>
+        <Label Content="Community" 
+               VerticalAlignment="Center"
+               HorizontalAlignment="Right"
+               Grid.Column="0"
+               Grid.Row="7"/>
         
         <TextBox Name="edtName" 
                  Grid.Column="1"
@@ -78,10 +90,22 @@
                   Grid.Row="5"
                   Grid.Column="1"
                   VerticalAlignment="Center"
+                  Checked="edtEnabledUPS_Checked"
+                  Unchecked="edtEnabledUPS_Unchecked"
                   Content="Включён"/>
+        <TextBox Name="edtUPSType" 
+                 Grid.Column="1"
+                 Grid.Row="6"
+                 Width="50"
+                 HorizontalAlignment="Left"
+                 Margin="3"/>
+        <TextBox Name="edtCommunity" 
+                 Grid.Column="1"
+                 Grid.Row="7"                                  
+                 Margin="3"/>
         <Button Name="btnOk" 
                 Grid.Column="1"
-                Grid.Row="6" 
+                Grid.Row="8" 
                 Margin="3"
                 Width="100"
                 HorizontalAlignment="Right"

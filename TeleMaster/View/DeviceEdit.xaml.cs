@@ -40,20 +40,31 @@ namespace TeleMaster.View
                 MessageBox.Show("Ошибка формата IP-адреса сервера телесканеров!");
                 return;
             }
-            IPAddress ipUPS;
-            if (!IPAddress.TryParse(edtUPSSource.Text, out ipUPS))
+            int upsType = 0;
+            if (edtEnabledUPS.IsChecked.Value)
             {
-                MessageBox.Show("Ошибка формата IP-адреса ИБП!");
-                return;
+                IPAddress ipUPS;
+                if (!IPAddress.TryParse(edtUPSSource.Text, out ipUPS))
+                {
+                    MessageBox.Show("Ошибка формата IP-адреса ИБП!");
+                    return;
+                }
+
+                if (!Int32.TryParse(edtUPSType.Text, out upsType))
+                {
+                    MessageBox.Show("Ошибка формата типа ИБП!");
+                    return;
+                }
             }
 
             bool enabledAnalogue = edtEnabledAnalogue.IsChecked.HasValue ? edtEnabledAnalogue.IsChecked.Value : false;
             bool enabledDigital = edtEnabledDigital.IsChecked.HasValue ? edtEnabledDigital.IsChecked.Value : false;
             bool enabledUps = edtEnabledUPS.IsChecked.HasValue ? edtEnabledUPS.IsChecked.Value : false;
+            string community = edtCommunity.Text;
 
             if (this.item == null)
             { //create
-                Device d = new Device(edtName.Text, edtSource.Text, edtUPSSource.Text, enabledAnalogue, enabledDigital, enabledUps);
+                Device d = new Device(edtName.Text, edtSource.Text, edtUPSSource.Text, enabledAnalogue, enabledDigital, enabledUps, upsType, community);
                 Monitor.Instance.Devices.Add(d);                
             }
             else
@@ -65,13 +76,17 @@ namespace TeleMaster.View
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledAnalogue = enabledAnalogue;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledDigital = enabledDigital;
                 Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).DeviceEnabledUPS = enabledUps;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).UpsType = (UPSType)upsType;
+                Monitor.Instance.Devices.FirstOrDefault(d => d.ID == item.ID).Community = edtCommunity.Text;
+
             }
             Monitor.Instance.SaveDevices();
             this.Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {            
+        {
+            edtEnabledUPS.IsChecked = false;
             if (this.item != null)
             {
                 edtName.Text = item.Name;
@@ -80,7 +95,31 @@ namespace TeleMaster.View
                 edtEnabledAnalogue.IsChecked = item.DeviceEnabledAnalogue;
                 edtEnabledDigital.IsChecked = item.DeviceEnabledDigital;
                 edtEnabledUPS.IsChecked = item.DeviceEnabledUPS;
+                edtUPSType.Text = ((int)item.UpsType).ToString();
+                edtCommunity.Text = item.Community;
             }
+            CheckUpsState();
+        }
+
+        private void edtEnabledUPS_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckUpsState();
+        }
+        void CheckUpsState()
+        {
+            if (edtEnabledUPS.IsChecked.Value)
+            {
+                edtUPSSource.IsEnabled = true;
+            }
+            else
+            {
+                edtUPSSource.IsEnabled = false;
+            }
+        }
+
+        private void edtEnabledUPS_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckUpsState();
         }
     }
 }

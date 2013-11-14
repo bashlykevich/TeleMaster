@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using TeleMaster.Helpers;
 
 namespace TeleMaster.DAO
 {
+    
+
+    public enum UPSType { NoType, Socomec, AP9630};
     public class Device
     {
         Guid id;
@@ -15,6 +15,39 @@ namespace TeleMaster.DAO
         // адрес сервера
         string host = "";
         string upsHost = "";
+        string community = "public";
+
+        public string Community
+        {
+            get { return community; }
+            set { community = value; }
+        }
+
+        DateTime lastOnlineTimeTS = DateTime.MinValue;
+        DateTime lastOnlineTimeUps = DateTime.MinValue;
+
+        public DateTime LastOnlineTimeUps
+        {
+            get { return lastOnlineTimeUps; }
+            set { lastOnlineTimeUps = value; }
+        }
+
+        public DateTime LastOnlineTimeTS
+        {
+            get { return lastOnlineTimeTS; }
+            set { lastOnlineTimeTS = value; }
+        }
+
+        UPSType upsType = UPSType.NoType;
+
+        public UPSType UpsType
+        {
+            get { return upsType; }
+            set { upsType = value; }
+        }
+
+        public string RDPUser = "user";
+        public string RDPPassword = "1";
 
         public string UpsHost
         {
@@ -23,7 +56,78 @@ namespace TeleMaster.DAO
         }
         bool deviceEnabledAnalogue;
         bool deviceEnabledDigital;
-        bool deviceEnabledUPS;        
+        bool deviceEnabledUPS;
+
+        string batteryCapacityRemaining = "";
+        string batteryVoltage = "";
+        string outputLoad = "";
+        string batteryStatus = "";
+
+        public string BatteryStatus
+        {
+            get 
+            {
+                string res = "";
+                switch (batteryStatus)
+                {
+                    case "2":
+                        res = "normal";
+                        break;
+                    case "3":
+                        res = "low";
+                        break;
+                    case "4":
+                        res = "depleted";
+                        break;
+                    case "5":
+                        res = "discharging";
+                        break;
+                    case "6":
+                        res = "failure";
+                        break;
+                    default:
+                        res = "unknown";
+                        break;
+                }
+                return res;
+            }
+            set { batteryStatus = value; }
+        }
+
+        public string OutputLoad
+        {
+            get {
+                /*if (outputLoad == "")
+                    return "OL: N/A";
+                else*/
+                    return outputLoad;
+            }
+            set { outputLoad = value; }
+        }
+        public string BatteryVoltage
+        {
+            get
+            {
+                /*if (batteryVoltage == "")
+                    return "BV: N/A";
+                else*/
+                    return batteryVoltage;
+            }
+            set { batteryVoltage = value; }
+        }
+
+        public string BatteryCapacityRemaining
+        {
+            get 
+            {
+                //if (batteryCapacityRemaining == "")
+                //    return "BC: N/A";
+                //else
+                    return batteryCapacityRemaining;
+            }
+            set { batteryCapacityRemaining = value; }
+        }
+
 
         #region getters-setters
         public Guid ID
@@ -62,18 +166,25 @@ namespace TeleMaster.DAO
         }
         public bool DeviceDisabledAnalogue
         {
-            get { return !deviceEnabledAnalogue; }            
+            get { return !deviceEnabledAnalogue; }
         }
         public bool DeviceDisabledDigital
         {
-            get { return !deviceEnabledDigital; }            
+            get { return !deviceEnabledDigital; }
         }
         public bool DeviceDisabledUPS
         {
-            get { return !deviceEnabledUPS; }            
+            get { return !deviceEnabledUPS; }
         }
         #endregion
 
+        public bool ShowUpsInfo
+        {
+            get
+            {
+                return DeviceEnabledUPS && !deviceUpsIsDisconnected;
+            }
+        }   
 
         // Analog
         int lastReadRowIndexForAnalogue = 0;
@@ -108,7 +219,7 @@ namespace TeleMaster.DAO
         }
         // UPS
 
-        
+
         // флаги для отображения        
 
         public bool DeviceAnalogueHasAlerts
@@ -117,38 +228,38 @@ namespace TeleMaster.DAO
             {
                 if (!this.deviceEnabledAnalogue)
                     return false;
-                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.AlertForAnalogue);
-                return hasAlerts; 
-            }            
+                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.Аналог);
+                return hasAlerts;
+            }
         }
-        
+
         public bool DeviceDigitalHasAlerts
         {
             get
             {
                 if (!this.deviceEnabledDigital)
                     return false;
-                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.AlertForDigital);
-                return hasAlerts; 
+                bool hasAlerts = TeleMaster.Management.Monitor.Instance.Events.Exists(e => e.DeviceID == this.id && e.Type == EventType.Цифра);
+                return hasAlerts;
             }
         }
         bool deviceUpsHasAlerts = false;
 
         public bool DeviceUpsHasAlerts
         {
-            get 
+            get
             {
                 if (!this.deviceEnabledUPS)
                     return false;
                 return deviceUpsHasAlerts;
-            }            
+            }
         }
-        
+
         bool isDisconnected = false;
 
         public bool IsDisconnectedA
         {
-            get 
+            get
             {
                 if (this.deviceEnabledAnalogue)
                     return isDisconnected;
@@ -177,14 +288,14 @@ namespace TeleMaster.DAO
         {
             get { return deviceUpsIsDisconnected; }
             set { deviceUpsIsDisconnected = value; }
-        }        
-        
-                        
+        }
+
+
         public Device()
         {
-            
+
         }
-        public Device(string name, string host, string hostUps, bool enabledAnalogue, bool enabledDigital, bool enabledUps)
+        public Device(string name, string host, string hostUps, bool enabledAnalogue, bool enabledDigital, bool enabledUps, int upsType, string comm)
         {
             this.name = name;
             this.host = host;
@@ -193,14 +304,18 @@ namespace TeleMaster.DAO
             this.deviceEnabledDigital = enabledDigital;
             this.deviceEnabledUPS = enabledUps;
 
+            this.community = comm;
             this.lastReadDateForAnalogue = DateTime.Now.Date;
             this.lastReadDateForDigital = DateTime.Now.Date;
-        }                
-        
-        public void LogEventToFile(string message)
+
+            this.upsType = (UPSType)upsType;
+        }
+
+        public void LogEventToFile(string message, EventType type)
         {
+            message = type.ToString() + "\t" + message;
             string filePath = "logs";
-            if(!Directory.Exists(filePath))
+            if (!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);
             }
@@ -211,7 +326,7 @@ namespace TeleMaster.DAO
                                          + DateTime.Now.Day + ".log";
             string fileFullName = filePath + @"\" + fileName;
             bool wasWritten = false;
-            while(!wasWritten)
+            while (!wasWritten)
             {
                 try
                 {
@@ -219,7 +334,8 @@ namespace TeleMaster.DAO
                     stream.WriteLine(message);
                     stream.Close();
                     wasWritten = true;
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
 
                 }

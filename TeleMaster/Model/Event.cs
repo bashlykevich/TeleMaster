@@ -5,12 +5,12 @@ using System.Text;
 
 namespace TeleMaster.DAO
 {
-    public enum EventType { AlertForAnalogue, AlertForDigital, Disconnect, NoType};
+    public enum EventType { Аналог, Цифра, Сеть, Общее, ИБП};
     public enum EventState { Новое, Просмотрено};
     public class Event
     {
         Guid deviceID = Guid.Empty;
-        EventType type = EventType.NoType;
+        EventType type = EventType.Общее;
 
         public EventType Type
         {
@@ -38,7 +38,7 @@ namespace TeleMaster.DAO
             this.deviceName = "";
             this.message = message;
             this.deviceID = Guid.Empty;
-            this.type = EventType.NoType;
+            this.type = EventType.Общее;
         }
         public Event(string message, string device, Guid deviceID, EventType type)
         {
