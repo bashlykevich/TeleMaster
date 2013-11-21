@@ -65,10 +65,11 @@ namespace TeleMaster
         }
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {           
+        {
+            RefreshDevices_ListView();
             RefreshDevices();
             //DisplayIcons(false);
-            StartMonitor();
+            //StartMonitor();
             ////SendSnmpRequest(Monitor.Instance.Devices.FirstOrDefault());
         }
 
@@ -96,19 +97,26 @@ namespace TeleMaster
             RefreshDevices();
             RefreshEvents();
         }
-        
+
+        void RefreshDevices_IconView()
+        {
+            lsDisplay.DataContext = null;
+            lsDisplay.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Name);
+        }
+        void RefreshDevices_ListView()
+        {
+            lsDisplayList.DataContext = null;
+            lsDisplayList.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Host);
+        }
         void RefreshDevices()
         {
             if (iconsView)
             {
-                lsDisplay.DataContext = null;
-                lsDisplay.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Name);
+                RefreshDevices_IconView();
             }
             else
             {
-                lsDisplayList.DataContext = null;
-                lsDisplayList.DataContext = Monitor.Instance.Devices.OrderBy(d => d.Host);
-                //lsDisplayList.DataContext = Monitor.Instance.Devices.Where(d => d.DeviceEnabledUPS).OrderBy(d => d.Name);
+                RefreshDevices_ListView();
             }
         }
         
@@ -542,8 +550,13 @@ namespace TeleMaster
         int DisconnectInterval = 5;
         void GetNewEvents(Device device)
         {
+            if (!IpAddress.IsIP(device.Host) || device.Host == "0.0.0.0" || String.IsNullOrEmpty(device.Host))
+            {
+                device.IsDisconnected = true;
+                return;
+            }
             // ping server
-            Ping p = new Ping();
+            Ping p = new Ping();            
             PingReply reply = p.Send(device.Host);
             if (reply.Status != IPStatus.Success)
             {
